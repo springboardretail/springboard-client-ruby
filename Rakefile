@@ -13,6 +13,7 @@ spec = Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.8.6'
   s.summary = "REST client for use in Slingshot client applications"
   s.files = FileList["{lib}/**/*"].to_a
+  s.add_dependency("rest-client")
   s.add_dependency("activesupport")
   s.add_dependency("json", '>= 1.1.3')
 end
