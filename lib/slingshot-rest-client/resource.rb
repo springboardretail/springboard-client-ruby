@@ -41,9 +41,7 @@ module SlingshotRestClient
       if response.code == 201
         new_url = URI.parse(self.url)
         new_url.path = response.headers[:location]
-        new_resource = self.class.new(new_url.to_s, self.options)
-        RAILS_DEFAULT_LOGGER.debug "Following 201: #{new_url}"
-        new_resource.get
+        self.class.new(new_url.to_s, self.options)
       elsif response.headers[:content_type] == 'application/json'
         JSON.parse(response).to_struct(true)
       else
