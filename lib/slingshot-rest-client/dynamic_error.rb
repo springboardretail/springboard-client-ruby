@@ -1,5 +1,3 @@
-require 'activesupport'
-
 ##
 # This is an exception class that includes a special factory method, []
 #

@@ -1,9 +1,11 @@
-RestClient.log = File.join(Rails.root, 'log', 'restclient.log')
-
 # A thin wrapper around RestClient (http://rest-client.heroku.com/)
 # that provides automatic serialization and deserialization
-module SlingshotRestClient  
-  class Resource < RestClient::Resource    
+module SlingshotRestClient
+  def self.log=(log_file)
+    RestClient.log = log_file
+  end
+  
+  class Resource < RestClient::Resource
     def get(additional_headers={})
       process_response { super }
     end
@@ -35,8 +37,6 @@ module SlingshotRestClient
     
     def process_response(options={}, &block)
       response = yield
-      RAILS_DEFAULT_LOGGER.debug "Response:"
-      RAILS_DEFAULT_LOGGER.debug response.inspect
       # If 201 Created, GET the newly created resource
       if response.code == 201
         new_url = URI.parse(self.url)
