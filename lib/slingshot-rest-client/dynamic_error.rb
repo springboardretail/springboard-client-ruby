@@ -86,4 +86,12 @@ class DynamicError < StandardError
     return true if klass === self
     super
   end
+
+  def to_json(*args)
+    {
+      'message' => message,
+      'error_type' => error_type,
+      'error_data' => error_data
+    }.to_json(*args)
+  end
 end
