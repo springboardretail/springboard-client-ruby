@@ -5,6 +5,7 @@ require File.join(File.dirname(__FILE__), 'slingshot-rest-client', 'core_ext', '
 require File.join(File.dirname(__FILE__), 'slingshot-rest-client', 'core_ext', 'array')
 require File.join(File.dirname(__FILE__), 'slingshot-rest-client', 'core_ext', 'struct')
 require File.join(File.dirname(__FILE__), 'slingshot-rest-client', 'core_ext', 'hash')
+require File.join(File.dirname(__FILE__), 'slingshot-rest-client', 'core_ext', 'string')
 
 require File.join(File.dirname(__FILE__), 'slingshot-rest-client', 'resource')
 require File.join(File.dirname(__FILE__), 'slingshot-rest-client', 'dynamic_error')
