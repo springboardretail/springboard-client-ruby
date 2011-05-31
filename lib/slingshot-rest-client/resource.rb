@@ -23,6 +23,18 @@ module SlingshotRestClient
     def delete(additional_headers={})
       process_response { super }
     end
+    
+    def query_string(hash)
+      new_url = url =~ /\?/ ? "#{url}&" : "#{url}?"
+      new_url += hash.map do |key, value|
+        if value.is_a? Array
+          value.map {|v| "#{key}[]=#{v}"}.join('&')
+        else
+          "#{key}=#{value}"
+        end
+      end.join('&')
+      self.class.new(new_url, self.options)
+    end
         
     private
     
