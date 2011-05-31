@@ -30,7 +30,7 @@ module SlingshotRestClient
     def each
       each_page do |page|
         page[:results].each do |result|
-          yield result
+          yield result, page
         end
       end
     end
