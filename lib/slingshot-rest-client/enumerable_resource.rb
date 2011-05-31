@@ -19,8 +19,7 @@ module SlingshotRestClient
       total_pages = nil
       page = 1
       while total_pages.nil? or page <= total_pages
-        page_resource = self.class.new(self.url + "?page=#{page}", options)
-        puts page_resource.url
+        page_resource = query_string :page => page
         data = page_resource.get
         yield data
         total_pages ||= data[:pages]
