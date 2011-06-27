@@ -10,3 +10,4 @@ require File.join(File.dirname(__FILE__), 'slingshot-rest-client', 'core_ext', '
 require File.join(File.dirname(__FILE__), 'slingshot-rest-client', 'resource')
 require File.join(File.dirname(__FILE__), 'slingshot-rest-client', 'dynamic_error')
 require File.join(File.dirname(__FILE__), 'slingshot-rest-client', 'rest_error')
+require File.join(File.dirname(__FILE__), 'slingshot-rest-client', 'enumerable_resource')
