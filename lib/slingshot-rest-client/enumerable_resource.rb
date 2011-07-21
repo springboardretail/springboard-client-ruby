@@ -34,10 +34,17 @@ module SlingshotRestClient
         end
       end
     end
+
+    ##
+    # Optimized count method that fetches a small single page to determine the total without
+    # iterating over all the pages.
+    def count
+      query_string(:page => 1, :per_page => 1).get.total
+    end
   end
 end
 
 class SlingshotRestClient::Resource
-  include SlingshotRestClient::EnumerableResource
   include ::Enumerable
+  include SlingshotRestClient::EnumerableResource
 end
