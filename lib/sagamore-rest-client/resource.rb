@@ -28,9 +28,9 @@ module Sagamore::RestClient
       new_url = url =~ /\?/ ? "#{url}&" : "#{url}?"
       new_url += hash.map do |key, value|
         if value.is_a? Array
-          value.map {|v| "#{key}[]=#{v}"}.join('&')
+          value.map {|v| "#{key}[]=#{URI.encode(v)}"}.join('&')
         else
-          "#{key}=#{value}"
+          "#{key}=#{URI.encode(value)}"
         end
       end.join('&')
       self.class.new(new_url, self.options)
