@@ -1,1 +1,1 @@
-irb -r ./lib/slingshot-rest-client -r ./lib/slingshot-rest-client/console
+irb -r ./lib/sagamore-rest-client -r ./lib/sagamore-rest-client/console

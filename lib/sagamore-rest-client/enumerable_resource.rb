@@ -3,8 +3,8 @@
 # If included, allows iterating over collection resources as though they were enumerables
 #
 # @example
-# resource = SlingshotRestClient::Resource.new(
-#   'http://services.slingshot.local/customers',
+# resource = Sagamore::RestClient::Resource.new(
+#   'http://sagamore.local:8001/customers',
 #   :user => 'admin',
 #   :password => 'admin'
 # )
@@ -13,7 +13,7 @@
 #   puts customer.name
 # end
 #
-module SlingshotRestClient
+module Sagamore::RestClient
   module EnumerableResource
     def each_page
       total_pages = nil
@@ -44,7 +44,7 @@ module SlingshotRestClient
   end
 end
 
-class SlingshotRestClient::Resource
+class Sagamore::RestClient::Resource
   include ::Enumerable
-  include SlingshotRestClient::EnumerableResource
+  include Sagamore::RestClient::EnumerableResource
 end

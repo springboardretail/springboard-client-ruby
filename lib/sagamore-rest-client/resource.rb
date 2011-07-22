@@ -1,11 +1,11 @@
 # A thin wrapper around RestClient (http://rest-client.heroku.com/)
 # that provides automatic serialization and deserialization
-module SlingshotRestClient
+module Sagamore::RestClient
   def self.log=(log_file)
-    RestClient.log = log_file
+    ::RestClient.log = log_file
   end
   
-  class Resource < RestClient::Resource
+  class Resource < ::RestClient::Resource
     def get(additional_headers={})
       process_response { super }
     end
@@ -59,11 +59,11 @@ module SlingshotRestClient
       else
         response
       end
-    rescue RestClient::Unauthorized => exception
+    rescue ::RestClient::Unauthorized => exception
       raise RestError.new("Unauthorized", :unauthorized, nil)
     rescue Errno::ECONNREFUSED
       raise RestError.new("Could not connect to server", 'connection_error')
-    rescue RestClient::ExceptionWithResponse => exception
+    rescue ::RestClient::ExceptionWithResponse => exception
       Errors.raise_exception(exception)
     end
   end
