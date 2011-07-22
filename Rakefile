@@ -8,7 +8,7 @@ end
 
 spec = Gem::Specification.new do |s|
   s.name = "sagamore-rest-client"
-  s.version = "1.0.0rc4"
+  s.version = "1.0.0rc5"
   s.platform = Gem::Platform::RUBY
   s.required_ruby_version = '>= 1.8.6'
   s.summary = "REST client for use in Sagamore client applications"
