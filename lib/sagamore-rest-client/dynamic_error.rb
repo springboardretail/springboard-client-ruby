@@ -55,12 +55,12 @@ class DynamicError < StandardError
   # @return [Class] the dynamically created subclass constant
   #
   # @example Creating a new error class
-  # >> new_error_class = SlingshotRestClient::RestError.create_error_class(:new_error)
-  # => SlingshotRestClient::RestError::NewError
+  # >> new_error_class = Sagamore::RestClient::RestError.create_error_class(:new_error)
+  # => Sagamore::RestClient::RestError::NewError
   # >> new_error_class.error_type
   # => :new_error
   # >> new_error_class.name
-  # => "SlingshotRestClient::RestError::NewError"
+  # => "Sagamore::RestClient::RestError::NewError"
   #
   def self.create_error_class(error_type)
     klass = self.const_set(error_type.to_s.classify, Class.new(self))

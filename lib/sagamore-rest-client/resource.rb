@@ -60,9 +60,9 @@ module Sagamore::RestClient
         response
       end
     rescue ::RestClient::Unauthorized => exception
-      raise RestError.new("Unauthorized", :unauthorized, nil)
+      raise ::Sagamore::RestClient::RestError.new("Unauthorized", :unauthorized, nil)
     rescue Errno::ECONNREFUSED
-      raise RestError.new("Could not connect to server", 'connection_error')
+      raise ::Sagamore::RestClient::RestError.new("Could not connect to server", 'connection_error')
     rescue ::RestClient::ExceptionWithResponse => exception
       Errors.raise_exception(exception)
     end
@@ -78,7 +78,7 @@ module Sagamore::RestClient
       error_type = error_details['error'].underscore.to_sym
       error_message = error_details['message']
 
-      RestError.new(error_message, error_type, error_details['details'])
+      ::Sagamore::RestClient::RestError.new(error_message, error_type, error_details['details'])
     end
     
     def self.parse_error_body(exception)
