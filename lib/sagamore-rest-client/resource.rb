@@ -1,10 +1,6 @@
 # A thin wrapper around RestClient (http://rest-client.heroku.com/)
 # that provides automatic serialization and deserialization
 module Sagamore::RestClient
-  def self.log=(log_file)
-    ::RestClient.log = log_file
-  end
-  
   class Resource < ::RestClient::Resource
     def get(additional_headers={})
       process_response { super }

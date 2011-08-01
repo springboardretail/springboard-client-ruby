@@ -19,7 +19,8 @@ module Sagamore::RestClient
       total_pages = nil
       page = 1
       while total_pages.nil? or page <= total_pages
-        page_resource = query_string :page => page
+        params = Sagamore::RestClient.default_each_params.merge(:page => page)
+        page_resource = query_string(params)
         data = page_resource.get
         yield data
         total_pages ||= data[:pages]
