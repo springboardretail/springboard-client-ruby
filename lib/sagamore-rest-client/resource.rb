@@ -24,13 +24,15 @@ module Sagamore::RestClient
       process_response { super }
     end
     
+    ##
+    # Returns a new resource with the values pased in the hash *appended* to the query string
     def query_string(hash)
       new_url = url =~ /\?/ ? "#{url}&" : "#{url}?"
       new_url += hash.map do |key, value|
         if value.is_a? Array
-          value.map {|v| "#{key}[]=#{URI.encode(v.to_s)}"}.join('&')
+          value.map {|v| "#{key}[]=#{CGI.escape(v.to_s)}"}.join('&')
         else
-          "#{key}=#{URI.encode(value.to_s)}"
+          "#{key}=#{CGI.escape(value.to_s)}"
         end
       end.join('&')
       self.class.new(new_url, self.options)
