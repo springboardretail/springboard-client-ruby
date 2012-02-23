@@ -24,6 +24,19 @@ response = resource.get
 response = client.get '/items/1234'
 ```
 
+### Request body
+
+If the request body is a Hash, it will automatically be serialized as JSON. Otherwise, it is
+passed through untouched:
+
+```ruby
+# this:
+client[:some_collection].post :a => 1, :b => 2
+
+# is equivalent to this:
+client[:some_collection].post '{"a":1,"b":2}'
+```
+
 ### Bang variants
 
 All HTTP request methods have a bang variant that raises an exception on failure:
