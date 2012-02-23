@@ -23,3 +23,16 @@ response = resource.get
 ```ruby
 response = client.get '/items/1234'
 ```
+
+### Bang variants
+
+All HTTP request methods have a bang variant that raises an exception on failure:
+
+```ruby
+response = client[:i_dont_exist].get
+puts response.status
+# 404
+
+client[:i_dont_exist].get!
+# Raises Sagamore::Client::RequestFailed exception
+```
