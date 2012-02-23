@@ -3,20 +3,24 @@
 module Sagamore::RestClient
   class Resource < ::RestClient::Resource
     def get(additional_headers={})
+      additional_headers = set_session_cookie(additional_headers)
       process_response { super }
     end
     
     def post(payload, additional_headers={})
+      additional_headers = set_session_cookie(additional_headers)
       payload, additional_headers = prepare_request(payload, additional_headers)
       process_response { super }
     end
     
     def put(payload, additional_headers={})
+      additional_headers = set_session_cookie(additional_headers)
       payload, additional_headers = prepare_request(payload, additional_headers)
       process_response { super }
     end
 
     def delete(additional_headers={})
+      additional_headers = set_session_cookie(additional_headers)
       process_response { super }
     end
     
@@ -33,9 +37,41 @@ module Sagamore::RestClient
       end.join('&')
       self.class.new(new_url, self.options)
     end
-        
+
+    def [](suburl, &new_block)
+      r = super
+      r.session_cookie = session_cookie
+      r
+    end
+
+    def session_cookie
+      @session_cookie ||= authenticate
+    end
+
+    def session_cookie=(cookie)
+      @session_cookie = cookie
+    end
+
     private
-    
+
+    def set_session_cookie(additional_headers)
+      additional_headers[:cookies] ||= {}
+      additional_headers[:cookies]["rack.session"] = CGI::escape session_cookie
+      additional_headers
+    end
+
+    def authenticate
+      auth_resource = ::RestClient::Resource.new /(https?:\/\/[^\/]+)/.match(url)[0]
+      response = auth_resource['api/auth/identity/callback'].
+        post(:auth_key => user, :password => password){|r| r}
+
+      if response.headers[:location] && response.headers[:location] =~ /^\/api\/auth\/failure/
+        raise ::Sagamore::RestClient::RestError.new("Authentication failed", :unauthorized, nil)
+      else
+        response.cookies['rack.session']
+      end
+    end
+
     def prepare_request(payload, additional_headers)
       # Assume JSON
       if payload.is_a? Hash and !additional_headers[:content_type]
