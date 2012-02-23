@@ -19,11 +19,27 @@ module Sagamore
       end
     end
 
-    HTTP_METHODS.each do |http_method|
-      define_method(http_method) do |*args, &block|
-        Response.new @session.__send__(http_method, *args, &block)
-      end
+    def get(uri, headers = {})
+      Response.new @session.get(uri, headers)
+    end
 
+    def head(uri, headers = {})
+      Response.new @session.head(uri, headers)
+    end
+
+    def post(uri, data, headers = {})
+      Response.new @session.post(uri, parse_request_body(data), headers)
+    end
+
+    def put(uri, data, headers = {})
+      Response.new @session.put(uri, parse_request_body(data), headers)
+    end
+
+    def delete(uri, headers = {})
+      Response.new @session.delete(uri, headers)
+    end
+
+    %w{get head post put delete}.each do |http_method|
       define_method("#{http_method}!") do |*args, &block|
         response = __send__(http_method, *args, &block)
         if !response.success?
@@ -33,8 +49,8 @@ module Sagamore
       end
     end
 
-    def method_missing(method, *args, &block)
-      @session.respond_to?(method) ? @session.__send__(method, *args, &block) : super
+    def parse_request_body(body)
+      body.is_a?(Hash) ? JSON.dump(body) : body
     end
 
     def [](uri)
