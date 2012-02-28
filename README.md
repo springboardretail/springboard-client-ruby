@@ -7,6 +7,7 @@ It is a wrapper around the [Patron](http://toland.github.com/patron/) HTTP clien
 ## Examples
 
 ### Connecting
+
 ```ruby
 sagamore = Sagamore::Client.new 'http://example.sagamore.us',
   :username => 'user',
@@ -14,16 +15,18 @@ sagamore = Sagamore::Client.new 'http://example.sagamore.us',
 ```
 
 ### Resource oriented
+
 ```ruby
 resource = sagamore[:items][1234]
 response = resource.get
 ```
 
 ### URI oriented
+
 ```ruby
 response = sagamore.get '/items/1234'
 ```
-gi
+
 ### Request body
 
 If the request body is a Hash, it will automatically be serialized as JSON. Otherwise, it is
@@ -51,6 +54,7 @@ sagamore[:i_dont_exist].get!
 ```
 
 ### Filtering collections
+
 ```ruby
 filtered_items = sagamore[:items] \
   .filter('custom@group' => 'somegroup') \
