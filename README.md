@@ -8,22 +8,22 @@ It is a wrapper around the [Patron](http://toland.github.com/patron/) HTTP clien
 
 ### Connecting
 ```ruby
-client = Sagamore::Client.new 'http://example.sagamore.us',
+sagamore = Sagamore::Client.new 'http://example.sagamore.us',
   :username => 'user',
   :password => 'secret'
 ```
 
 ### Resource oriented
 ```ruby
-resource = client[:items][1234]
+resource = sagamore[:items][1234]
 response = resource.get
 ```
 
 ### URI oriented
 ```ruby
-response = client.get '/items/1234'
+response = sagamore.get '/items/1234'
 ```
-
+gi
 ### Request body
 
 If the request body is a Hash, it will automatically be serialized as JSON. Otherwise, it is
@@ -31,10 +31,10 @@ passed through untouched:
 
 ```ruby
 # this:
-client[:some_collection].post :a => 1, :b => 2
+sagamore[:some_collection].post :a => 1, :b => 2
 
 # is equivalent to this:
-client[:some_collection].post '{"a":1,"b":2}'
+sagamore[:some_collection].post '{"a":1,"b":2}'
 ```
 
 ### Bang variants
@@ -42,10 +42,21 @@ client[:some_collection].post '{"a":1,"b":2}'
 All HTTP request methods have a bang variant that raises an exception on failure:
 
 ```ruby
-response = client[:i_dont_exist].get
+response = sagamore[:i_dont_exist].get
 puts response.status
 # 404
 
-client[:i_dont_exist].get!
+sagamore[:i_dont_exist].get!
 # Raises Sagamore::Client::RequestFailed exception
+```
+
+### Filtering collections
+```ruby
+filtered_items = sagamore[:items] \
+  .filter('custom@group' => 'somegroup') \
+  .filter('price' => {'$gt' => 100})
+
+filtered_items.each do |item|
+  # ...do something with item
+end
 ```
