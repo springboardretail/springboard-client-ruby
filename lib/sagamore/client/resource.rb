@@ -30,14 +30,14 @@ module Sagamore
 
       def filter(new_filters)
         new_filters = JSON.parse(new_filters) if new_filters.is_a?(String)
-        if filters = query['_filters']
+        if filters = query['_filter']
           filters = JSON.parse(filters)
           filters = [filters] unless filters.is_a?(Array)
           filters.push(new_filters)
         else
           filters = new_filters
         end
-        query('_filters' => filters.to_json)
+        query('_filter' => filters.to_json)
       end
 
       def clone(uri=nil)

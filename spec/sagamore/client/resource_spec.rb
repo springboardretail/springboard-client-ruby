@@ -30,21 +30,21 @@ describe Sagamore::Client::Resource do
     describe "when given a hash" do
       it "should add a _filter query string param" do
         resource.filter(:a => 1, :b => 2).uri.should ==
-          '/some/path?_filters={"a":1,"b":2}'.to_uri
+          '/some/path?_filter={"a":1,"b":2}'.to_uri
       end
     end
     
     describe "when called multiple times" do
       it "should append args to _filter param as JSON array" do
         resource.filter(:a => 1).filter(:b => 2).filter(:c => 3).uri.should ==
-          '/some/path?_filters=[{"a":1},{"b":2},{"c":3}]'.to_uri
+          '/some/path?_filter=[{"a":1},{"b":2},{"c":3}]'.to_uri
       end
     end
 
     describe "when given a string" do
       it "should add a _filter query string param" do
         resource.filter('{"a":1,"b":2}').uri.should ==
-          '/some/path?_filters={"a":1,"b":2}'.to_uri
+          '/some/path?_filter={"a":1,"b":2}'.to_uri
       end
     end
   end
