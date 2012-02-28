@@ -8,7 +8,16 @@ module Sagamore
       end
 
       def merge_query_values!(values)
-        self.query_values = (self.query_values || {}).merge(values)
+        self.query_values = (self.query_values || {}).merge(stringify_hash_keys(values))
+      end
+
+      private
+
+      def stringify_hash_keys(hash)
+        hash.inject({}) do |copy, (k, v)|
+          copy[k.to_s] = (v.is_a? Hash) ? stringify_hash_keys(hash) : v
+          copy
+        end
       end
     end
   end
