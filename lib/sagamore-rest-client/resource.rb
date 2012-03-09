@@ -87,7 +87,9 @@ module Sagamore::RestClient
       if response.code == 201
         new_url = URI.parse(self.url)
         new_url.path = response.headers[:location]
-        self.class.new(new_url.to_s, self.options)
+        resource = self.class.new(new_url.to_s, self.options)
+        resource.session_cookie = session_cookie
+        resource
       elsif response.headers[:content_type] == 'application/json'
         JSON.parse(response).to_struct(true)
       else
