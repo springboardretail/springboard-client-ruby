@@ -63,7 +63,7 @@ module Sagamore::RestClient
     def authenticate
       auth_resource = ::RestClient::Resource.new /(https?:\/\/[^\/]+)/.match(url)[0]
       response = auth_resource['api/auth/identity/callback'].
-        post(:auth_key => user, :password => password){|r| r}
+        post(:auth_key => user, :password => password)
 
       if response.headers[:location] && response.headers[:location] =~ /^\/api\/auth\/failure/
         raise ::Sagamore::RestClient::RestError.new("Authentication failed", :unauthorized, nil)
