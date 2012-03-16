@@ -10,8 +10,7 @@ It is a wrapper around the [Patron](http://toland.github.com/patron/) HTTP clien
 
 ```ruby
 sagamore = Sagamore::Client.new 'http://example.sagamore.us',
-  :username => 'user',
-  :password => 'secret'
+sagamore.auth :username => 'user', :password => 'secret'
 ```
 
 ### Resource oriented
