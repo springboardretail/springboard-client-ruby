@@ -7,16 +7,25 @@ module Sagamore
   class Client
     HTTP_METHODS = Patron::Request::VALID_ACTIONS
     URI = Addressable::URI
-    
+
+    attr_reader :session
+
     def initialize(base_uri, opts={})
-      @session = Patron::Session.new
-      @session.base_url = base_uri
-      if debug = opts.delete(:debug)
-        @session.enable_debug(debug == true ? nil : debug)
+      configure_session(base_uri, opts)
+    end
+
+    def session
+      @session ||= Patron::Session.new
+    end
+
+    def auth(opts={})
+      unless opts[:username] && opts[:password]
+        raise "Must specify :username and :password"
       end
-      opts.each do |key, value|
-        @session.__send__("#{key}=", value)
-      end
+      body = URI.form_encode \
+        :auth_key => opts[:username],
+        :password => opts[:password]
+      post '/auth/identity/callback', body
     end
 
     def get(uri, headers = {})
@@ -86,6 +95,16 @@ module Sagamore
     end
 
     class RequestFailed < RuntimeError; end
+
+    protected
+
+    def configure_session(base_url, opts)
+      session.base_url = base_url
+      session.handle_cookies
+      if debug = opts[:debug]
+        session.enable_debug(debug == true ? nil : debug)
+      end
+    end
   end
 end
 
