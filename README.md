@@ -9,7 +9,7 @@ It is a wrapper around the [Patron](http://toland.github.com/patron/) HTTP clien
 ### Connecting
 
 ```ruby
-sagamore = Sagamore::Client.new 'http://example.sagamore.us',
+sagamore = Sagamore::Client.new 'http://example.sagamore.us/api',
 sagamore.auth :username => 'user', :password => 'secret'
 ```
 
@@ -39,14 +39,27 @@ sagamore[:some_collection].post :a => 1, :b => 2
 sagamore[:some_collection].post '{"a":1,"b":2}'
 ```
 
+### Response
+
+```ruby
+response = sagamore[:items][1].get
+
+response.status # Response status code as an Integer
+response.success? # true/false depending on whether 'status' indicates non-error
+response.body # Raw response body as a string
+response.data # Parsed response body as a Hash or Array
+response[:some_key] # Returns the corresponding key from 'data'
+response.headers # Response headers as a Hash
+```
+
 ### Bang variants
 
 All HTTP request methods have a bang variant that raises an exception on failure:
 
 ```ruby
 response = sagamore[:i_dont_exist].get
-puts response.status
-# 404
+response.status
+# => 404
 
 sagamore[:i_dont_exist].get!
 # Raises Sagamore::Client::RequestFailed exception
@@ -62,4 +75,17 @@ filtered_items = sagamore[:items] \
 filtered_items.each do |item|
   # ...do something with item
 end
+```
+
+### Debugging
+
+```ruby
+# Log request/response trace to stdout
+client.debug = true
+
+# Or, log to a file
+client.debug = '/path/to/file.log'
+
+# Same values can be passed via :debug option to client constructor
+client = Sagamore::Client.new '<url>', :debug => true
 ```
