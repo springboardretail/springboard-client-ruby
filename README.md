@@ -30,7 +30,7 @@ response = sagamore.get '/items/1234'
 
 Resources include Ruby's Enumerable module for easy iteration over collections:
 
-```
+```ruby
 sagamore[:items].each do |item|
   puts item['description']
 end
@@ -42,7 +42,7 @@ usernames = sagamore[:users].map {|user| user['login']}
 
 Resources also provide a `filter` method that support's Sagamore's advanced filter syntax:
 
-```
+```ruby
 active_users = sagamore[:users].filter(:active => true)
 active_users.each {|user| # do something with each active user }
 
