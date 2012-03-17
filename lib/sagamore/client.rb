@@ -18,6 +18,10 @@ module Sagamore
       @session ||= Patron::Session.new
     end
 
+    def debug=(debug)
+      session.enable_debug(debug == true ? nil : debug)
+    end
+
     def auth(opts={})
       unless opts[:username] && opts[:password]
         raise "Must specify :username and :password"
@@ -101,9 +105,7 @@ module Sagamore
     def configure_session(base_url, opts)
       session.base_url = base_url
       session.handle_cookies
-      if debug = opts[:debug]
-        session.enable_debug(debug == true ? nil : debug)
-      end
+      self.debug = debug opts[:debug] if opts[:debug]
     end
   end
 end
