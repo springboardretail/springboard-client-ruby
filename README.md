@@ -26,6 +26,34 @@ response = resource.get
 response = sagamore.get '/items/1234'
 ```
 
+### Collection Resources
+
+Resources include Ruby's Enumerable module for easy iteration over collections:
+
+```
+sagamore[:items].each do |item|
+  puts item['description']
+end
+
+item_count = sagamore[:items].count
+
+usernames = sagamore[:users].map {|user| user['login']}
+```
+
+Resources also provide a `filter` method that support's Sagamore's advanced filter syntax:
+
+```
+active_users = sagamore[:users].filter(:active => true)
+active_users.each {|user| # do something with each active user }
+
+# filter returns a new resource which allows for chaining:
+items = sagamore[:items]
+active_items = items.filter(:active => true)
+active_items.filter(:price => {'$gt' => 10}).each do |item|
+   # ...
+end
+```
+
 ### Request body
 
 If the request body is a Hash, it will automatically be serialized as JSON. Otherwise, it is
