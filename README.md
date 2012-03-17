@@ -93,18 +93,6 @@ sagamore[:i_dont_exist].get!
 # Raises Sagamore::Client::RequestFailed exception
 ```
 
-### Filtering collections
-
-```ruby
-filtered_items = sagamore[:items] \
-  .filter('custom@group' => 'somegroup') \
-  .filter('price' => {'$gt' => 100})
-
-filtered_items.each do |item|
-  # ...do something with item
-end
-```
-
 ### Debugging
 
 ```ruby
