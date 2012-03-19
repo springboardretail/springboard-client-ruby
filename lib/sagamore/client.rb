@@ -35,28 +35,29 @@ module Sagamore
       body = URI.form_encode \
         :auth_key => opts[:username],
         :password => opts[:password]
-      response = post '/auth/identity/callback', body
+      response = post '/auth/identity/callback', body,
+        'Content-Type' => 'application/x-www-form-urlencoded'
       response.success? or raise AuthFailed, "Sagamore auth failed"
     end
 
     def get(uri, headers = {})
-      Response.new @session.get(uri, headers)
+      Response.new session.get(uri, headers)
     end
 
     def head(uri, headers = {})
-      Response.new @session.head(uri, headers)
+      Response.new session.head(uri, headers)
     end
 
     def post(uri, data, headers = {})
-      Response.new @session.post(uri, parse_request_body(data), headers)
+      Response.new session.post(uri, parse_request_body(data), headers)
     end
 
     def put(uri, data, headers = {})
-      Response.new @session.put(uri, parse_request_body(data), headers)
+      Response.new session.put(uri, parse_request_body(data), headers)
     end
 
     def delete(uri, headers = {})
-      Response.new @session.delete(uri, headers)
+      Response.new session.delete(uri, headers)
     end
 
     %w{get head post put delete}.each do |http_method|
@@ -112,6 +113,7 @@ module Sagamore
 
     def configure_session(base_url, opts)
       session.base_url = base_url
+      session.headers['Content-Type'] = 'application/json'
       session.handle_cookies
       session.insecure = opts[:insecure] if opts.has_key?(:insecure)
       self.debug = opts[:debug] if opts.has_key?(:debug)

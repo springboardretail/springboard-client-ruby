@@ -11,8 +11,9 @@ describe Sagamore::Client do
 
   describe "auth" do
     it "should attempt to authenticate with the given username and password" do
-      request_stub = stub_request(:post, "#{base_url}/auth/identity/callback").
-        with(:body => "auth_key=coco&password=boggle")
+      request_stub = stub_request(:post, "#{base_url}/auth/identity/callback").with \
+        :body => "auth_key=coco&password=boggle",
+        :headers => {'Content-Type' => 'application/x-www-form-urlencoded'}
       client.auth(:username => 'coco', :password => 'boggle')
       request_stub.should have_been_requested
     end
@@ -73,16 +74,32 @@ describe Sagamore::Client do
     end
   end
 
-  describe "post" do
-    it "should call session's post" do
-      session.should_receive(:post).with('/relative/path', 'body', {})
-      client.post('/relative/path', 'body')
-    end
+  [:put, :post].each do |method|
+    describe method do
+      it "should call session's #{method}" do
+        session.should_receive(method).with('/relative/path', 'body', {})
+        client.__send__(method, '/relative/path', 'body')
+      end
 
-    it "should serialize the request body as JSON if it is a hash" do
-      body_hash = {:key1 => 'val1', :key2 => 'val2'}
-      session.should_receive(:post).with('/path', body_hash.to_json, {})
-      client.post('/path', body_hash)
+      it "should serialize the request body as JSON if it is a hash" do
+        body_hash = {:key1 => 'val1', :key2 => 'val2'}
+        session.should_receive(method).with('/path', body_hash.to_json, {})
+        client.__send__(method, '/path', body_hash)
+      end
+
+      it "should set the Content-Type header to application/json if not specified" do
+        request_stub = stub_request(method, "#{base_url}/my/resource").
+          with(:headers => {'Content-Type' => 'application/json'})
+        client.__send__(method, '/my/resource', :key1 => 'val1')
+        request_stub.should have_been_requested
+      end
+
+      it "should set the Content-Type header to specified value if specified" do
+        request_stub = stub_request(method, "#{base_url}/my/resource").
+          with(:headers => {'Content-Type' => 'application/pdf'})
+        client.__send__(method, '/my/resource', {:key1 => 'val1'}, 'Content-Type' => 'application/pdf')
+        request_stub.should have_been_requested
+      end
     end
   end
 end
