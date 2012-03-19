@@ -11,14 +11,27 @@ describe Sagamore::Client do
 
   describe "auth" do
     it "should attempt to authenticate with the given username and password" do
-      session.should_receive(:post).with('/auth/identity/callback', "auth_key=coco&password=boggle", {})
+      request_stub = stub_request(:post, "#{base_url}/auth/identity/callback").
+        with(:body => "auth_key=coco&password=boggle")
       client.auth(:username => 'coco', :password => 'boggle')
+      request_stub.should have_been_requested
     end
     
     it "should raise an exception if called without username or password" do
       lambda { client.auth }.should raise_error("Must specify :username and :password")
       lambda { client.auth(:username => 'x') }.should raise_error("Must specify :username and :password")
       lambda { client.auth(:password => 'y') }.should raise_error("Must specify :username and :password")
+    end
+
+    it "should return true if auth succeeds" do
+      stub_request(:post, "#{base_url}/auth/identity/callback").to_return(:status => 200)
+      lambda { client.auth(:username => 'someone', :password => 'right') }.should be_true
+    end
+
+    it "should raise an AuthFailed if auth fails" do
+      stub_request(:post, "#{base_url}/auth/identity/callback").to_return(:status => 401)
+      lambda { client.auth(:username => 'someone', :password => 'wrong') }.should \
+        raise_error(Sagamore::Client::AuthFailed, "Sagamore auth failed")
     end
   end
 

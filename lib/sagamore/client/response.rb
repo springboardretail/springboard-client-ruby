@@ -14,7 +14,7 @@ module Sagamore
       end
 
       def success?
-        status < 400
+        @response.status < 400
       end
 
       def method_missing(method, *args, &block)

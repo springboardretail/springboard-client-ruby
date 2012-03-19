@@ -29,7 +29,8 @@ module Sagamore
       body = URI.form_encode \
         :auth_key => opts[:username],
         :password => opts[:password]
-      post '/auth/identity/callback', body
+      response = post '/auth/identity/callback', body
+      response.success? or raise AuthFailed, "Sagamore auth failed"
     end
 
     def get(uri, headers = {})
@@ -99,6 +100,7 @@ module Sagamore
     end
 
     class RequestFailed < RuntimeError; end
+    class AuthFailed < RequestFailed; end
 
     protected
 
