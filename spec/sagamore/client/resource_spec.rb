@@ -1,14 +1,13 @@
 require 'spec_helper'
 
 describe Sagamore::Client::Resource do
+  include_context "client"
+
+  let(:resource) { Sagamore::Client::Resource.new(client, '/some/path') }
+
   def parse_uri(uri)
     Addressable::URI.parse(uri)
   end
-
-  let(:client) { Sagamore::Client.new('http://bozo.com', :username => 'un', :password => 'pw')}
-  let(:session) { client.instance_variable_get(:@session) }
-  let(:base_url) { "http://un:pw@bozo.com" }
-  let(:resource) { Sagamore::Client::Resource.new(client, '/some/path') }
 
   describe "query" do
     describe "when called with a hash" do

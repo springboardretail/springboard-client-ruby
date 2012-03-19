@@ -1,9 +1,7 @@
 require 'spec_helper'
 
 describe Sagamore::Client do
-  let(:base_url) { "http://bozo.com" }
-  let(:client) { Sagamore::Client.new(base_url) }
-  let(:session) { client.session }
+  include_context "client"
 
   describe "session" do
     it "should be a Patron::Session" do
