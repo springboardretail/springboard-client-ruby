@@ -7,11 +7,10 @@ RSpec::Core::RakeTask.new(:spec)
 
 task :default => :spec
 
+desc "Start a console with a Sagamore::Client instance"
 task :console do
   require 'sagamore/client'
-  CLIENT = Sagamore::Client.new \
-    ENV['URI'],
-    :username => ENV['USER'],
-    :password => ENV['PASSWORD']
+  CLIENT = Sagamore::Client.new(ENV['URI'])
+  CLIENT.auth :username => ENV['USER'], :password => ENV['PASSWORD']
   Pry.start
 end
