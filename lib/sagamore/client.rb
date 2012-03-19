@@ -10,6 +10,12 @@ module Sagamore
 
     attr_reader :session
 
+    ##
+    # Initialize a Sagamore Client
+    #
+    # @param [String] base_uri Base URI
+    # @option opts [true, String] :debug Pass true to debug to stdout. Pass a String to debug to given filename.
+    # @option opts [Boolean] :insecure Disable SSL certificate verification
     def initialize(base_uri, opts={})
       configure_session(base_uri, opts)
     end
@@ -107,7 +113,8 @@ module Sagamore
     def configure_session(base_url, opts)
       session.base_url = base_url
       session.handle_cookies
-      self.debug = debug opts[:debug] if opts[:debug]
+      session.insecure = opts[:insecure] if opts.has_key?(:insecure)
+      self.debug = opts[:debug] if opts.has_key?(:debug)
     end
   end
 end

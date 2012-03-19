@@ -52,6 +52,11 @@ describe Sagamore::Client do
       session.should_receive(:handle_cookies)
       client.__send__(:configure_session, base_url, :x => 'y')
     end
+
+    it "should allow setting insecure on the session" do
+      session.should_receive(:insecure=).with(true)
+      client.__send__(:configure_session, base_url, :insecure => true)
+    end
   end
 
   describe "get" do
