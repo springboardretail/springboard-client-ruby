@@ -18,12 +18,21 @@ sagamore.auth :username => 'user', :password => 'secret'
 ```ruby
 resource = sagamore[:items][1234]
 response = resource.get
+response = resource.delete
+
+# Query string generation:
+resource1 = sagamore[:items]
+resource2 = resource.query(:key1 => 'val1', 'key with spaces' => 'val with spaces')
+resource2.uri.to_s
+# => "/items?key%20with%20spaces=val%20with%20spaces&key1=val1"
 ```
 
 ### URI oriented
 
 ```ruby
 response = sagamore.get '/items/1234'
+response = sagamore.delete '/items/1234'
+item_count = sagamore.count '/items'
 ```
 
 ### Collection Resources
