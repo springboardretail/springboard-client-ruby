@@ -5,7 +5,7 @@ module Sagamore
 
       CLIENT_DELEGATED_METHODS = HTTP_METHODS \
         + HTTP_METHODS.map{|m| "#{m}!".to_sym} \
-        + [:each, :each_page]
+        + [:each, :each_page, :count]
 
       include ::Enumerable
 
