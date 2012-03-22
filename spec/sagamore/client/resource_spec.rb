@@ -14,6 +14,11 @@ describe Sagamore::Client::Resource do
       it "should set the query string parameters" do
         resource.query(:a => 1, :b => 2).uri.to_s.should == "/some/path?a=1&b=2"
       end
+
+      it "should URL encode the given keys and values" do
+        resource.query("i have spaces" => "so do i: duh").uri.to_s.
+          should == "/some/path?i%20have%20spaces=so%20do%20i%3A%20duh"
+      end
     end
     
     describe "when called without arguments" do
