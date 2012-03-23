@@ -49,7 +49,7 @@ item_count = sagamore[:items].count
 usernames = sagamore[:users].map {|user| user['login']}
 ```
 
-Resources also provide a `filter` method that support's Sagamore's advanced filter syntax:
+Resources have a `filter` method that support's Sagamore's advanced filter syntax:
 
 ```ruby
 active_users = sagamore[:users].filter(:active => true)
@@ -60,6 +60,18 @@ items = sagamore[:items]
 active_items = items.filter(:active => true)
 active_items.filter(:price => {'$gt' => 10}).each do |item|
    # ...
+end
+```
+
+Resources have a `sort` method that accepts any number of sort options. Note that each call to sort overwrites any previous sorts.
+
+```ruby
+resource.sort(:id, :price)
+resource.sort('created_at,desc')
+
+# returns a new resource for chaining:
+resource.sort(:description, :created_at).filter(:active => true).each do |item|
+  # ...
 end
 ```
 
