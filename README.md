@@ -4,16 +4,14 @@ This is the Sagamore Client library for Ruby. It provides access to the Sagamore
 
 It is a wrapper around the [Patron](http://toland.github.com/patron/) HTTP client library.
 
-## Examples
-
-### Connecting
+## Connecting
 
 ```ruby
 sagamore = Sagamore::Client.new 'http://example.sagamore.us/api',
 sagamore.auth :username => 'user', :password => 'secret'
 ```
 
-### Resource oriented
+## Resource oriented
 
 ```ruby
 resource = sagamore[:items][1234]
@@ -27,7 +25,7 @@ resource2.uri.to_s
 # => "/items?key%20with%20spaces=val%20with%20spaces&key1=val1"
 ```
 
-### URI oriented
+## URI oriented
 
 ```ruby
 response = sagamore.get '/items/1234'
@@ -35,8 +33,9 @@ response = sagamore.delete '/items/1234'
 item_count = sagamore.count '/items'
 ```
 
-### Collection Resources
+## Collection Resources
 
+### Enumerable
 Resources include Ruby's Enumerable module for easy iteration over collections:
 
 ```ruby
@@ -49,6 +48,7 @@ item_count = sagamore[:items].count
 usernames = sagamore[:users].map {|user| user['login']}
 ```
 
+### Filtering
 Resources have a `filter` method that support's Sagamore's advanced filter syntax:
 
 ```ruby
@@ -63,6 +63,7 @@ active_items.filter(:price => {'$gt' => 10}).each do |item|
 end
 ```
 
+### Sorting
 Resources have a `sort` method that accepts any number of sort options. Note that each call to sort overwrites any previous sorts.
 
 ```ruby
@@ -75,7 +76,7 @@ resource.sort(:description, :created_at).filter(:active => true).each do |item|
 end
 ```
 
-### Request body
+## Request body
 
 If the request body is a Hash, it will automatically be serialized as JSON. Otherwise, it is
 passed through untouched:
@@ -88,7 +89,7 @@ sagamore[:some_collection].post :a => 1, :b => 2
 sagamore[:some_collection].post '{"a":1,"b":2}'
 ```
 
-### Response
+## Response
 
 ```ruby
 response = sagamore[:items][1].get
@@ -101,7 +102,7 @@ response[:some_key] # Returns the corresponding key from 'data'
 response.headers # Response headers as a Hash
 ```
 
-### Bang variants
+## Bang variants
 
 All HTTP request methods have a bang variant that raises an exception on failure:
 
@@ -114,7 +115,7 @@ sagamore[:i_dont_exist].get!
 # Raises Sagamore::Client::RequestFailed exception
 ```
 
-### Debugging
+## Debugging
 
 ```ruby
 # Log request/response trace to stdout
