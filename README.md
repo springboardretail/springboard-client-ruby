@@ -33,6 +33,7 @@ response = sagamore.delete '/items/1234'
 item_count = sagamore.count '/items'
 ```
 
+<a name="collection-resources"></a>
 ## Collection Resources
 
 ### Enumerable
