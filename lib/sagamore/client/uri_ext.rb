@@ -8,7 +8,14 @@ module Sagamore
       end
 
       def merge_query_values!(values)
-        self.query_values = (self.query_values || {}).merge(stringify_hash_keys(values))
+        self.sagamore_query_values = (self.query_values || {}).merge(stringify_hash_keys(values))
+      end
+
+      def sagamore_query_values=(values)
+        retval = self.query_values = values
+        # Hack to strip digits from Addressable::URI's subscript notation
+        self.query = self.query.gsub(/\[\d+\]=/, '[]=')
+        retval
       end
 
       private
