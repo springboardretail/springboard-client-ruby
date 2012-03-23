@@ -62,7 +62,7 @@ describe Sagamore::Client do
 
   describe "[]" do
     it "should return a resource object with the given path and client" do
-      client["path"].should be_a Sagamore::Resource
+      client["path"].should be_a Sagamore::Client::Resource
     end
   end
 
