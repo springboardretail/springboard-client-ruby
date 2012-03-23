@@ -17,7 +17,7 @@ describe Sagamore::Client do
       client.auth(:username => 'coco', :password => 'boggle')
       request_stub.should have_been_requested
     end
-    
+
     it "should raise an exception if called without username or password" do
       lambda { client.auth }.should raise_error("Must specify :username and :password")
       lambda { client.auth(:username => 'x') }.should raise_error("Must specify :username and :password")
@@ -57,6 +57,12 @@ describe Sagamore::Client do
     it "should allow setting insecure on the session" do
       session.should_receive(:insecure=).with(true)
       client.__send__(:configure_session, base_url, :insecure => true)
+    end
+  end
+
+  describe "[]" do
+    it "should return a resource object with the given path and client" do
+      client["path"].should be_a Sagamore::Resource
     end
   end
 

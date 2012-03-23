@@ -1,7 +1,7 @@
 module Sagamore
   class Client
     class Resource
-      attr_accessor :uri
+      attr_reader :uri, :client
 
       CLIENT_DELEGATED_METHODS = HTTP_METHODS \
         + HTTP_METHODS.map{|m| "#{m}!".to_sym} \
@@ -15,16 +15,16 @@ module Sagamore
       end
 
       def [](uri)
-        self.class.new(@client, @uri.subpath(uri))
+        clone(self.uri.subpath(uri))
       end
 
       def query(query=nil)
         if query
-          uri = @uri.dup
+          uri = self.uri.dup
           uri.merge_query_values!(query)
           clone(uri)
         else
-          @uri.query_values || {}
+          self.uri.query_values || {}
         end
       end
 
@@ -41,12 +41,12 @@ module Sagamore
       end
 
       def clone(uri=nil)
-        self.class.new(@client, uri ? uri : @uri)
+        self.class.new(client, uri ? uri : self.uri)
       end
 
       CLIENT_DELEGATED_METHODS.each do |method|
         define_method(method) do |*args, &block|
-          @client.__send__(method, *args.unshift(@uri), &block)
+          client.__send__(method, *args.unshift(uri), &block)
         end
       end
     end

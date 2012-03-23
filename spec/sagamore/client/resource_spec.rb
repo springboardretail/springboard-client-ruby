@@ -9,6 +9,33 @@ describe Sagamore::Client::Resource do
     Addressable::URI.parse(uri)
   end
 
+  describe "[]" do
+    it "should return a new resource" do
+      resource["subpath"].should be_a Sagamore::Client::Resource
+      resource["subpath"].object_id.should_not == resource.object_id
+    end
+    
+    it "should return a resource with the given subpath appended to its URI" do
+      resource["subpath"].uri.to_s.should == "/some/path/subpath"
+    end
+
+    it "should return a resource with the same client instance" do
+      resource["subpath"].client.should === resource.client
+    end
+
+    it "should accept a symbol as a path" do
+      resource[:subpath].uri.to_s.should == "/some/path/subpath"
+    end
+
+    it "should accept a symbol as a path" do
+      resource[:subpath].uri.to_s.should == "/some/path/subpath"
+    end
+
+    it "should not URI encode the given subpath" do
+      resource["subpath with spaces"].uri.to_s.should == "/some/path/subpath with spaces"
+    end
+  end
+
   describe "query" do
     describe "when called with a hash" do
       it "should set the query string parameters" do
