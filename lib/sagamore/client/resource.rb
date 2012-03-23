@@ -40,6 +40,10 @@ module Sagamore
         query('_filter' => filters.to_json)
       end
 
+      def sort(*sorts)
+        query('sort' => sorts)
+      end
+
       def clone(uri=nil)
         self.class.new(client, uri ? uri : self.uri)
       end

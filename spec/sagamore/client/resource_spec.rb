@@ -80,6 +80,18 @@ describe Sagamore::Client::Resource do
     end
   end
 
+  describe "sort" do
+    it "should set the sort parameter based on the given values" do
+      resource.sort('f1', 'f2,desc').uri.query.should == 'sort[]=f1&sort[]=f2%2Cdesc'
+    end
+
+    it "should replace any existing sort parameter" do
+      resource.sort('f1', 'f2,desc')
+      resource.sort('f3,asc', 'f4').uri.query.should == 'sort[]=f3%2Casc&sort[]=f4'
+    end
+  end
+
+
   %w{count get put post delete each each_page}.each do |method|
     describe method do
       it "should call the client's #{method} method with the resource's URI" do
