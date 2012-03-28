@@ -37,5 +37,10 @@ describe Addressable::URI do
       uri.sagamore_query_values = uri.query_values
       uri.to_s.should == '/relative/path?sort[]=f1&sort[]=f2'
     end
+
+    it "should stringify boolean param values" do
+      uri.sagamore_query_values = {:p1 => true, :p2 => false}
+      uri.to_s.should == '/relative/path?p1=true&p2=false'
+    end
   end
 end
