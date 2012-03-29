@@ -4,6 +4,17 @@ This is the Sagamore Client library for Ruby. It provides access to the Sagamore
 
 It is a wrapper around the [Patron](http://toland.github.com/patron/) HTTP client library.
 
+## Installation
+
+You need a recent version of libcurl and a sane build environment.
+
+Debian/Ubuntu:
+
+```
+sudo apt-get install build-essential libcurl4-dev-openssl
+gem install sagamore-client
+```
+
 ## Connecting
 
 ```ruby
