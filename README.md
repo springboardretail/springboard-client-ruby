@@ -11,7 +11,7 @@ You need a recent version of libcurl and a sane build environment.
 Debian/Ubuntu:
 
 ```
-sudo apt-get install build-essential libcurl4-dev-openssl
+sudo apt-get install build-essential libcurl4-openssl-dev
 gem install sagamore-client
 ```
 
