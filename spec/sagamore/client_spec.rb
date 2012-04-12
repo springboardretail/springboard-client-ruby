@@ -66,25 +66,53 @@ describe Sagamore::Client do
     end
   end
 
-  describe "get" do
-    it "should call session's get" do
-      session.should_receive(:get).with('/relative/path', {})
-      client.get('/relative/path')
+
+  [:get, :head, :delete].each do |method|
+    bang_method = "#{method}!"
+    describe method do
+      it "should call session's #{method}" do
+        session.should_receive(method).with('/relative/path', {})
+        client.__send__(method, '/relative/path')
+      end
+
+      it "should return a Sagamore::Client::Response" do
+        request_stub = stub_request(method, "#{base_url}/relative/path")
+        response = client.__send__(method, '/relative/path')
+        response.should be_a Sagamore::Client::Response
+      end
+    end
+
+    describe bang_method do
+      it "should call #{method}" do
+        response = mock(Sagamore::Client::Response)
+        response.should_receive(:success?).and_return(true)
+        client.should_receive(method).with('/path').and_return(response)
+        client.__send__(bang_method, '/path').should === response
+      end
+
+      it "should raise an exception on failure" do
+        response = mock(Sagamore::Client::Response)
+        response.should_receive(:success?).and_return(false)
+        response.should_receive(:status_line).and_return('404 Not Found')
+        client.should_receive(method).with('/path').and_return(response)
+        lambda { client.send(bang_method, '/path') }.should raise_error(Sagamore::Client::RequestFailed)
+      end
     end
   end
 
-  describe "get!" do
-    it "should raise an exception on failure" do
-      stub_request(:get, base_url+'/').to_return(:status => 404)
-      lambda { client.get!('/') }.should raise_error(Sagamore::Client::RequestFailed)
-    end
-  end
 
   [:put, :post].each do |method|
+    bang_method = "#{method}!"
     describe method do
       it "should call session's #{method}" do
         session.should_receive(method).with('/relative/path', 'body', {})
         client.__send__(method, '/relative/path', 'body')
+      end
+
+      it "should return a Sagamore::Client::Response" do
+        request_stub = stub_request(method, "#{base_url}/relative/path")
+        response = client.__send__(method, '/relative/path', 'body')
+        response.should be_a Sagamore::Client::Response
       end
 
       it "should serialize the request body as JSON if it is a hash" do
@@ -105,6 +133,23 @@ describe Sagamore::Client do
           with(:headers => {'Content-Type' => 'application/pdf'})
         client.__send__(method, '/my/resource', {:key1 => 'val1'}, 'Content-Type' => 'application/pdf')
         request_stub.should have_been_requested
+      end
+    end
+
+    describe bang_method do
+      it "should call #{method}" do
+        response = mock(Sagamore::Client::Response)
+        response.should_receive(:success?).and_return(true)
+        client.should_receive(method).with('/path', 'body').and_return(response)
+        client.__send__(bang_method, '/path', 'body').should === response
+      end
+
+      it "should raise an exception on failure" do
+        response = mock(Sagamore::Client::Response)
+        response.should_receive(:success?).and_return(false)
+        response.should_receive(:status_line).and_return('404 Not Found')
+        client.should_receive(method).with('/path', 'body').and_return(response)
+        lambda { client.send(bang_method, '/path', 'body') }.should raise_error(Sagamore::Client::RequestFailed)
       end
     end
   end
