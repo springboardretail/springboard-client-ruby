@@ -123,4 +123,5 @@ end
 
 require 'sagamore/client/resource'
 require 'sagamore/client/response'
+require 'sagamore/client/body'
 require 'sagamore/client/uri_ext'

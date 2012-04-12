@@ -6,15 +6,19 @@ module Sagamore
       end
 
       def [](key)
-        data[key.to_s]
+        body[key]
       end
 
-      def data
-        @data ||= JSON.parse(@response.body)
+      def raw_body
+        @response.body
+      end
+
+      def body
+        @data ||= Body.new JSON.parse(@response.body)
       end
 
       def success?
-        @response.status < 400
+        status < 400
       end
 
       def method_missing(method, *args, &block)

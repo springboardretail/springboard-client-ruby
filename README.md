@@ -107,10 +107,45 @@ response = sagamore[:items][1].get
 
 response.status # Response status code as an Integer
 response.success? # true/false depending on whether 'status' indicates non-error
-response.body # Raw response body as a string
-response.data # Parsed response body as a Hash or Array
-response[:some_key] # Returns the corresponding key from 'data'
+response.body # Returns a Sagamore::Client::Body object (see below)
+response.raw_body # Returns the raw response body as a string
+response[:some_key] # Returns the corresponding key from 'body'
 response.headers # Response headers as a Hash
+```
+
+### Response Body
+
+Given the following JSON response from the server:
+
+```javascript
+{
+  "id": 1234,
+  "custom": {
+    "color": "Blue"
+  }
+}
+```
+
+Here are the various ways you can access the data:
+
+```ruby
+body = response.body
+
+# Symbols and strings can be used interchangeably for keys
+body[:id]
+# => 1234
+
+body[:custom][:color]
+# => "Blue"
+
+body['custom']['color']
+# => "Blue"
+
+body.to_hash
+=> {"id"=>1234, "custom"=>{"color"=>"Blue"}}
+
+response.raw_body
+=> "{\"id\":1234,\"custom\":{\"color\":\"Blue\"}}"
 ```
 
 ## Bang variants

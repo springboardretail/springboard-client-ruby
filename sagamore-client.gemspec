@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'patron'
   s.add_runtime_dependency 'addressable'
   s.add_runtime_dependency 'json'
+  s.add_runtime_dependency 'hashie'
 
   s.files         = `git ls-files`.split("\n")
   
