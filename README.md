@@ -87,6 +87,22 @@ resource.sort(:description, :created_at).filter(:active => true).each do |item|
 end
 ```
 
+### Creating Resources
+
+Create a new resource via POST:
+
+```ruby
+collection = client[:items]
+response = collection.post! :description => 'Some New Item'
+response.status_line
+# => "HTTP/1.1 201 Created"
+
+# To fetch the newly created resource:
+new_item_response = response.resource.get!
+new_item_response[:description]
+# => "Some New Item"
+```
+
 ## Request body
 
 If the request body is a Hash, it will automatically be serialized as JSON. Otherwise, it is
@@ -111,6 +127,7 @@ response.body # Returns a Sagamore::Client::Body object (see below)
 response.raw_body # Returns the raw response body as a string
 response[:some_key] # Returns the corresponding key from 'body'
 response.headers # Response headers as a Hash
+response.resource # Returns a Resource if the response included a "Location" header, else nil
 ```
 
 ### Response Body
@@ -159,6 +176,15 @@ response.status
 
 sagamore[:i_dont_exist].get!
 # Raises Sagamore::Client::RequestFailed exception
+
+# To access the response from the exception:
+begin
+  sagamore[:i_dont_exist].get!
+rescue Sagamore::Client::RequestFailed => error
+  puts error.response.status
+end
+# => 404
+
 ```
 
 ## Debugging
