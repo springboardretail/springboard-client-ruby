@@ -8,7 +8,7 @@ module Sagamore
     HTTP_METHODS = Patron::Request::VALID_ACTIONS
     URI = Addressable::URI
 
-    attr_reader :session
+    attr_reader :session, :base_uri
 
     ##
     # Initialize a Sagamore Client
@@ -17,6 +17,7 @@ module Sagamore
     # @option opts [true, String] :debug Pass true to debug to stdout. Pass a String to debug to given filename.
     # @option opts [Boolean] :insecure Disable SSL certificate verification
     def initialize(base_uri, opts={})
+      @base_uri = URI.parse(base_uri)
       configure_session(base_uri, opts)
     end
 
@@ -41,23 +42,23 @@ module Sagamore
     end
 
     def get(uri, headers = {})
-      Response.new session.get(uri, headers)
+      make_request :get, uri, headers
     end
 
     def head(uri, headers = {})
-      Response.new session.head(uri, headers)
-    end
-
-    def post(uri, data, headers = {})
-      Response.new session.post(uri, parse_request_body(data), headers)
-    end
-
-    def put(uri, data, headers = {})
-      Response.new session.put(uri, parse_request_body(data), headers)
+      make_request :head, uri, headers
     end
 
     def delete(uri, headers = {})
-      Response.new session.delete(uri, headers)
+      make_request :delete, uri, headers
+    end
+
+    def post(uri, body, headers = {})
+      make_request :post, uri, headers, body
+    end
+
+    def put(uri, body, headers = {})
+      make_request :put, uri, headers, body
     end
 
     %w{get head post put delete}.each do |http_method|
@@ -110,6 +111,23 @@ module Sagamore
     class AuthFailed < RequestFailed; end
 
     protected
+
+    def make_request(method, uri, headers, body=false)
+      args = [prepare_uri(uri).to_s]
+      args.push parse_request_body(body) unless body === false
+      args.push headers
+      new_response session.__send__(method, *args)
+    end
+
+    def prepare_uri(uri)
+      uri = URI.parse(uri)
+      uri.path = uri.path.gsub(/^#{base_uri.path}/, '')
+      uri
+    end
+
+    def new_response(patron_response)
+      Response.new patron_response, self
+    end
 
     def configure_session(base_url, opts)
       session.base_url = base_url

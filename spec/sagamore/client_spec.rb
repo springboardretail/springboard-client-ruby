@@ -80,6 +80,12 @@ describe Sagamore::Client do
         response = client.__send__(method, '/relative/path')
         response.should be_a Sagamore::Client::Response
       end
+
+      it "should remove redundant base path prefix from URL if present" do
+        request_stub = stub_request(method, "#{base_url}/relative/path")
+        response = client.__send__(method, '/api/relative/path')
+        response.should be_a Sagamore::Client::Response
+      end
     end
 
     describe bang_method do

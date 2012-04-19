@@ -1,8 +1,9 @@
 module Sagamore
   class Client
     class Response
-      def initialize(response)
+      def initialize(response, client)
         @response = response
+        @client = client
       end
 
       def [](key)
