@@ -155,7 +155,10 @@ describe Sagamore::Client do
         response.should_receive(:success?).and_return(false)
         response.should_receive(:status_line).and_return('404 Not Found')
         client.should_receive(method).with('/path', 'body').and_return(response)
-        lambda { client.send(bang_method, '/path', 'body') }.should raise_error(Sagamore::Client::RequestFailed)
+        expect { client.send(bang_method, '/path', 'body') }.to raise_error { |error|
+          error.should be_a(Sagamore::Client::RequestFailed)
+          error.response.should === response
+        }
       end
     end
   end

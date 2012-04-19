@@ -65,7 +65,9 @@ module Sagamore
       define_method("#{http_method}!") do |*args, &block|
         response = __send__(http_method, *args, &block)
         if !response.success?
-          raise RequestFailed, "Request failed with status: #{response.status_line}"
+          error = RequestFailed.new "Request failed with status: #{response.status_line}"
+          error.response = response
+          raise error
         end
         response
       end
@@ -107,7 +109,10 @@ module Sagamore
       get!(uri)['total']
     end
 
-    class RequestFailed < RuntimeError; end
+    class RequestFailed < RuntimeError
+      attr_accessor :response
+    end
+
     class AuthFailed < RequestFailed; end
 
     protected
