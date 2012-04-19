@@ -3,9 +3,12 @@ require 'spec_helper'
 describe Sagamore::Client::Response do
   include_context "client"
 
-  let(:body_json) { '{"key":"value"}' }
-  let(:patron_response) { Patron::Response.new('/path', 200, 0, 'X-Custom-Header: Hi', body_json) }
-  let(:response) { Sagamore::Client::Response.new(patron_response) }
+  let(:raw_body) { '{"key":"value"}' }
+  let(:raw_headers) { 'X-Custom-Header: Hi' }
+  let(:status_code) { 200 }
+  let(:path) { '/path' }
+  let(:patron_response) { Patron::Response.new(path, status_code, 0, raw_headers, raw_body) }
+  let(:response) { Sagamore::Client::Response.new(patron_response, client) }
 
   describe "body" do
     it "should return a Sagamore::Client::Body" do
@@ -19,7 +22,35 @@ describe Sagamore::Client::Response do
 
   describe "raw_body" do
     it "should return the raw body JSON" do
-      response.raw_body.should == body_json
+      response.raw_body.should == raw_body
+    end
+  end
+
+  describe "headers" do
+    it "should return the response headers as a hash" do
+      response.headers.should == {'X-Custom-Header' => 'Hi'}
+    end
+  end
+
+  describe "resource" do
+    describe "when Location header is returned" do
+      let(:raw_headers) { 'Location: /new/path' }
+
+      it "should be a Sagamore::Client::Resource" do
+        response.resource.should be_a Sagamore::Client::Resource
+      end
+
+      it "should have the Location header value as its URL" do
+        response.resource.uri.to_s.should == '/new/path'
+      end
+    end
+
+    describe "when Location header is not returned" do
+      let(:raw_headers) { '' }
+
+      it "should be nil" do
+        response.resource.should be_nil
+      end
     end
   end
 

@@ -25,6 +25,14 @@ module Sagamore
       def method_missing(method, *args, &block)
         @response.respond_to?(method) ? @response.__send__(method, *args, &block) : super
       end
+
+      def resource
+        if location = headers['Location']
+          @client[headers['Location']]
+        else
+          nil
+        end
+      end
     end
   end
 end
