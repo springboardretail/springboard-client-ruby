@@ -103,6 +103,28 @@ new_item_response[:description]
 # => "Some New Item"
 ```
 
+### Embedding Related Resources
+
+Use the `embed` method to include the contents of related resource in the response body of each item in the collection:
+
+```ruby
+collection = client[:sales][:orders].embed(:customer, :location)
+collection.first.to_hash
+# => {
+  "id" => 1,
+  "customer_id" => 2,
+  "customer" =>  {
+    # customer data
+  },
+  "location_id" => 3,
+  "location" =>  {
+    # location data
+  }
+}
+```
+
+The `embed` method accepts one or more arguments as symbols or strings. It supports chaining and will merge the results of multiple calls.
+
 ## Request body
 
 If the request body is a Hash, it will automatically be serialized as JSON. Otherwise, it is

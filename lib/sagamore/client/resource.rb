@@ -53,6 +53,11 @@ module Sagamore
         response[:results].first
       end
 
+      def embed(*embeds)
+        embeds = (query['_include'] || []) + embeds
+        query('_include' => embeds)
+      end
+
       CLIENT_DELEGATED_METHODS.each do |method|
         define_method(method) do |*args, &block|
           client.__send__(method, *args.unshift(uri), &block)

@@ -109,6 +109,7 @@ describe Sagamore::Client::Resource do
         :body => {:results => [{:id => "Me first!"}, {:id => "Me second!"}]}.to_json
       }
     }
+
     it "should set the per_page query string param to 1" do
       request_stub = stub_request(:get, "#{base_url}/some/path?page=1&per_page=1").to_return(response_data)
       resource.first
@@ -118,6 +119,33 @@ describe Sagamore::Client::Resource do
     it "should return the first element of the :results array" do
       request_stub = stub_request(:get, "#{base_url}/some/path?page=1&per_page=1").to_return(response_data)
       resource.first.should == {"id" => "Me first!"}
+    end
+  end
+
+  describe "embed" do
+    it "should support a single embed" do
+      resource.embed(:thing1).uri.to_s.should == 
+        '/some/path?_include[]=thing1'
+    end
+
+    it "should support multiple embeds" do
+      resource.embed(:thing1, :thing2, :thing3).uri.to_s.should == 
+        '/some/path?_include[]=thing1&_include[]=thing2&_include[]=thing3'
+    end
+
+    it "should merge multiple embed calls" do
+      resource.embed(:thing1, :thing2).embed(:thing3, :thing4).uri.to_s.should == 
+        '/some/path?_include[]=thing1&_include[]=thing2&_include[]=thing3&_include[]=thing4'
+    end
+
+    it "should merge multiple embed calls" do
+      resource.embed(:thing1, :thing2).embed(:thing3, :thing4).uri.to_s.should == 
+        '/some/path?_include[]=thing1&_include[]=thing2&_include[]=thing3&_include[]=thing4'
+    end
+
+    it "should merge a call to embed with a manually added _include query param" do
+      resource.query('_include[]' => :thing1).embed(:thing2, :thing3).uri.to_s.should == 
+        '/some/path?_include[]=thing1&_include[]=thing2&_include[]=thing3'
     end
   end
 end
