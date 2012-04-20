@@ -48,6 +48,11 @@ module Sagamore
         self.class.new(client, uri ? uri : self.uri)
       end
 
+      def first
+        response = query(:per_page => 1, :page => 1).get!
+        response[:results].first
+      end
+
       CLIENT_DELEGATED_METHODS.each do |method|
         define_method(method) do |*args, &block|
           client.__send__(method, *args.unshift(uri), &block)

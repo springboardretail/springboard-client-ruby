@@ -3,7 +3,8 @@ require 'spec_helper'
 describe Sagamore::Client::Resource do
   include_context "client"
 
-  let(:resource) { Sagamore::Client::Resource.new(client, '/some/path') }
+  let(:resource_path) { '/some/path' }
+  let(:resource) { Sagamore::Client::Resource.new(client, resource_path) }
 
   def parse_uri(uri)
     Addressable::URI.parse(uri)
@@ -100,5 +101,23 @@ describe Sagamore::Client::Resource do
       end
     end
   end
-end
 
+  describe "first" do
+    let(:response_data) {
+      {
+        :status => 200,
+        :body => {:results => [{:id => "Me first!"}, {:id => "Me second!"}]}.to_json
+      }
+    }
+    it "should set the per_page query string param to 1" do
+      request_stub = stub_request(:get, "#{base_url}/some/path?page=1&per_page=1").to_return(response_data)
+      resource.first
+      request_stub.should have_been_requested
+    end
+
+    it "should return the first element of the :results array" do
+      request_stub = stub_request(:get, "#{base_url}/some/path?page=1&per_page=1").to_return(response_data)
+      resource.first.should == {"id" => "Me first!"}
+    end
+  end
+end
