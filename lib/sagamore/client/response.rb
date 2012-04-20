@@ -15,7 +15,7 @@ module Sagamore
       end
 
       def body
-        @data ||= Body.new JSON.parse(@response.body)
+        @data ||= parse_body
       end
 
       def success?
@@ -31,6 +31,22 @@ module Sagamore
           @client[headers['Location']]
         else
           nil
+        end
+      end
+
+      protected
+
+      def parse_body
+        if @response.body.empty?
+          raise BodyError,
+            "Response body is empty. (Hint: If you just created a new resource, try: response.resource.get)" 
+        end
+
+        begin
+          data = JSON.parse(@response.body)
+          Body.new data
+        rescue JSON::ParserError => e
+          raise BodyError, "Can't parse response body. (Hint: Try the raw_body method.)"
         end
       end
     end

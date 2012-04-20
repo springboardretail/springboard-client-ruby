@@ -3,6 +3,8 @@ require 'patron'
 require 'addressable/uri'
 require 'json'
 
+require 'sagamore/client/errors'
+
 module Sagamore
   class Client
     HTTP_METHODS = Patron::Request::VALID_ACTIONS
@@ -108,12 +110,6 @@ module Sagamore
       uri.merge_query_values! 'page' => 1, 'per_page' => 1
       get!(uri)['total']
     end
-
-    class RequestFailed < RuntimeError
-      attr_accessor :response
-    end
-
-    class AuthFailed < RequestFailed; end
 
     protected
 

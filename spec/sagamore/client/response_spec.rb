@@ -11,12 +11,32 @@ describe Sagamore::Client::Response do
   let(:response) { Sagamore::Client::Response.new(patron_response, client) }
 
   describe "body" do
-    it "should return a Sagamore::Client::Body" do
-      response.body.should be_a Sagamore::Client::Body
+    describe "if raw body is valid JSON" do
+      it "should return a Sagamore::Client::Body" do
+        response.body.should be_a Sagamore::Client::Body
+      end
+
+      it "should wrap the parsed response body" do
+        response.body.to_hash.should == {"key" => "value"}
+      end
     end
 
-    it "should wrap the parsed response body" do
-      response.body.to_hash.should == {"key" => "value"}
+    describe "if raw body is not valid JSON" do
+      let(:raw_body) { 'I am not JSON!' }
+      it "should raise an informative error" do
+        expect { response.body }.to raise_error \
+          Sagamore::Client::BodyError,
+          "Can't parse response body. (Hint: Try the raw_body method.)"
+      end
+    end
+
+    describe "if raw body is empty" do
+      let(:raw_body) { '' }
+      it "should raise an informative error" do
+        expect { response.body }.to raise_error \
+          Sagamore::Client::BodyError,
+          "Response body is empty. (Hint: If you just created a new resource, try: response.resource.get)"
+      end
     end
   end
 
