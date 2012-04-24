@@ -3,8 +3,21 @@ require 'sagamore/client/collection'
 module Sagamore
   class Client
     class Resource
-      attr_reader :uri, :client
+      ##
+      # The resource's URI.
+      #
+      # @return [Addressable::URI]
+      attr_reader :uri
+      
+      ##
+      # The underlying Sagamore Client.
+      #
+      # @return [Client]
+      attr_reader :client
 
+      ##
+      # @param [Sagamore::Client] client
+      # @param [Addressable::URI, #to_s] uri
       def initialize(client, uri)
         @client = client
         @uri = URI.join('/', uri.to_s)
@@ -12,47 +25,77 @@ module Sagamore
 
       ##
       # Performs a HEAD request against the resource's URI and returns the Response.
+      #
+      # @return [Response]
       def head(headers=false); call_client(:head, headers); end
 
       ##
       # Performs a HEAD request against the resource's URI. Returns the Response
       # on success and raises a RequestFailed on failure.
+      #
+      # @raise [RequestFailed] On error response
+      #
+      # @return [Response]
       def head!(headers=false); call_client(:head!, headers); end
 
       ##
       # Performs a GET request against the resource's URI and returns the Response.
+      #
+      # @return [Response]
       def get(headers=false); call_client(:get, headers); end
 
       ##
       # Performs a GET request against the resource's URI. Returns the Response
       # on success and raises a RequestFailed on failure.
+      #
+      # @raise [RequestFailed] On error response
+      #
+      # @return [Response]
       def get!(headers=false); call_client(:get!, headers); end
 
       ##
       # Performs a DELETE request against the resource's URI and returns the Response.
+      #
+      # @return [Response]
       def delete(headers=false); call_client(:delete, headers); end
 
       ##
       # Performs a DELETE request against the resource's URI. Returns the Response
       # on success and raises a RequestFailed on failure.
+      #
+      # @raise [RequestFailed] On error response
+      #
+      # @return [Response]
       def delete!(headers=false); call_client(:delete!, headers); end
 
       ##
       # Performs a PUT request against the resource's URI and returns the Response.
+      #
+      # @return [Response]
       def put(body, headers=false); call_client(:put, body, headers); end
 
       ##
       # Performs a PUT request against the resource's URI. Returns the Response
       # on success and raises a RequestFailed on failure.
+      #
+      # @raise [RequestFailed] On error response
+      #
+      # @return [Response]
       def put!(body, headers=false); call_client(:put!, body, headers); end
 
       ##
       # Performs a POST request against the resource's URI and returns the Response.
+      #
+      # @return [Response]
       def post(body, headers=false); call_client(:post, body, headers); end
 
       ##
       # Performs a POST request against the resource's URI. Returns the Response
       # on success and raises a RequestFailed on failure.
+      #
+      # @raise [RequestFailed] On error response
+      #
+      # @return [Response]
       def post!(body, headers=false); call_client(:post!, body, headers); end
 
       ##
