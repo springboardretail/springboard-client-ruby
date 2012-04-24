@@ -125,6 +125,23 @@ collection.first.to_hash
 
 The `embed` method accepts one or more arguments as symbols or strings. It supports chaining and will merge the results of multiple calls.
 
+### Looping while results exist
+
+Issuing deletes while iterating over a collection resource can cause the pagination to shift resulting in unexpected behavior. Use `while_results` when you want to:
+
+* Consume messages from a queue, deleting each message after it has been processed.
+* Delete all resources in a collection that doesn't support a top-level DELETE method.
+
+For example:
+
+```ruby
+collection = client[:system][:messages]
+collection.while_results do |message|
+  # process message here...
+  collection[message['id']].delete!
+end
+```
+
 ## Request body
 
 If the request body is a Hash, it will automatically be serialized as JSON. Otherwise, it is
