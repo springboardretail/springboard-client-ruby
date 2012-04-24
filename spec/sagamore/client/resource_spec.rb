@@ -150,13 +150,6 @@ describe Sagamore::Client::Resource do
   end
 
   describe "while_results" do
-    let(:response_data) {
-      {
-        :status => 200,
-        :body => {:results => [{:id => "Me first!"}, {:id => "Me second!"}]}.to_json
-      }
-    }
-
     it "should yield each result to the block as long as the response includes results" do
       results = ["r1", "r2", "r3"]
 
@@ -174,6 +167,21 @@ describe Sagamore::Client::Resource do
       end
 
       yielded_results.should == ["r1", "r2", "r3"]
+    end
+
+    it "should raise an exception if it receives an error response" do
+      request_stub = stub_request(:get, "#{base_url}/some/path").to_return do |req|
+        {:status => 400}
+      end
+
+      # timeout in case of endless loop
+      Timeout::timeout(1) do
+        expect do
+          resource.while_results do |result|
+            # nothing
+          end
+        end.to raise_error(Sagamore::Client::RequestFailed)
+      end
     end
   end
 end
