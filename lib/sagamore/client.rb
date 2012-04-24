@@ -15,7 +15,7 @@ module Sagamore
     # Initialize a Sagamore Client
     #
     # @param [String] base_uri Base URI
-    # @option opts [true, String] :debug Pass true to debug to stdout. Pass a String to debug to given filename.
+    # @option opts [Boolean, String] :debug Pass true to debug to stdout. Pass a String to debug to given filename.
     # @option opts [Boolean] :insecure Disable SSL certificate verification
     def initialize(base_uri, opts={})
       @base_uri = URI.parse(base_uri)
@@ -23,7 +23,11 @@ module Sagamore
     end
 
     ##
-    # Returns the underlying Patron::Session
+    # Returns the underlying Patron session
+    #
+    # @see http://patron.rubyforge.org/Patron/Session.html Patron::Session docs
+    #
+    # @return [Patron::Session]
     def session
       @session ||= Patron::Session.new
     end
@@ -31,13 +35,23 @@ module Sagamore
     ##
     # Set to true to enable debugging to STDOUT or a string to write to the file
     # at that path.
+    #
+    # @param [String, Boolean] debug
+    #
+    # @return [String, Boolean] The debug argument
     def debug=(debug)
       session.enable_debug(debug == true ? nil : debug)
     end
 
     ##
-    # Passes the given credentials to the server. Stores the session token on
-    # success and raises an AuthFailed on failure.
+    # Passes the given credentials to the server, storing the session token on success.
+    #
+    # @raise [AuthFailed] If the credentials were invalid or the server returned an error
+    #
+    # @return [true]
+    #
+    # @option opts [String] :username Sagamore username
+    # @option opts [String] :password Sagamore password
     def auth(opts={})
       unless opts[:username] && opts[:password]
         raise "Must specify :username and :password"
@@ -52,51 +66,83 @@ module Sagamore
 
     ##
     # Performs a HEAD request against the given URI and returns the Response.
+    #
+    # @return [Response]
     def head(uri, headers=false); make_request(:head, uri, headers); end
 
     ##
     # Performs a HEAD request against the given URI. Returns the Response
     # on success and raises a RequestFailed on failure.
+    #
+    # @raise [RequestFailed] On error response
+    #
+    # @return [Response]
     def head!(uri, headers=false); raise_on_fail head(uri, headers); end
 
     ##
     # Performs a GET request against the given URI and returns the Response.
+    #
+    # @return [Response]
     def get(uri, headers=false); make_request(:get, uri, headers); end
 
     ##
     # Performs a GET request against the given URI. Returns the Response
     # on success and raises a RequestFailed on failure.
+    #
+    # @raise [RequestFailed] On error response
+    #
+    # @return [Response]
     def get!(uri, headers=false); raise_on_fail get(uri, headers); end
 
     ##
     # Performs a DELETE request against the given URI and returns the Response.
+    #
+    # @return [Response]
     def delete(uri, headers=false); make_request(:delete, uri, headers); end
 
     ##
     # Performs a DELETE request against the given URI. Returns the Response
     # on success and raises a RequestFailed on failure.
+    #
+    # @raise [RequestFailed] On error response
+    #
+    # @return [Response]
     def delete!(uri, headers=false); raise_on_fail delete(uri, headers); end
 
     ##
     # Performs a PUT request against the given URI and returns the Response.
+    #
+    # @return [Response]
     def put(uri, body, headers=false); make_request(:put, uri, headers, body); end
 
     ##
     # Performs a PUT request against the given URI. Returns the Response
     # on success and raises a RequestFailed on failure.
+    #
+    # @raise [RequestFailed] On error response
+    #
+    # @return [Response]
     def put!(uri, body, headers=false); raise_on_fail put(uri, body, headers); end
 
     ##
     # Performs a POST request against the given URI and returns the Response.
+    #
+    # @return [Response]
     def post(uri, body, headers=false); make_request(:post, uri, headers, body); end
 
     ##
     # Performs a POST request against the given URI. Returns the Response
     # on success and raises a RequestFailed on failure.
+    #
+    # @raise [RequestFailed] On error response
+    #
+    # @return [Response]
     def post!(uri, body, headers=false); raise_on_fail post(uri, body, headers); end
 
     ##
     # Returns a Resource for the given URI path.
+    #
+    # @return [Resource]
     def [](uri)
       Resource.new(self, uri)
     end

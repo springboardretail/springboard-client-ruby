@@ -18,7 +18,7 @@ gem install sagamore-client
 ## Connecting
 
 ```ruby
-sagamore = Sagamore::Client.new 'http://example.sagamore.us/api',
+sagamore = Sagamore::Client.new 'http://example.sagamore.us/api'
 sagamore.auth :username => 'user', :password => 'secret'
 ```
 
@@ -64,7 +64,9 @@ Resources have a `filter` method that support's Sagamore's advanced filter synta
 
 ```ruby
 active_users = sagamore[:users].filter(:active => true)
-active_users.each {|user| # do something with each active user }
+active_users.each do |user|
+  # do something with each active user
+end
 
 # filter returns a new resource which allows for chaining:
 items = sagamore[:items]
@@ -198,10 +200,10 @@ body['custom']['color']
 # => "Blue"
 
 body.to_hash
-=> {"id"=>1234, "custom"=>{"color"=>"Blue"}}
+# => {"id"=>1234, "custom"=>{"color"=>"Blue"}}
 
 response.raw_body
-=> "{\"id\":1234,\"custom\":{\"color\":\"Blue\"}}"
+# => "{\"id\":1234,\"custom\":{\"color\":\"Blue\"}}"
 ```
 
 ## Bang variants

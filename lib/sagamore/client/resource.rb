@@ -57,6 +57,8 @@ module Sagamore
 
       ##
       # Returns a new subordinate resource with the given sub-path.
+      #
+      # @return [Resource]
       def [](uri)
         clone(self.uri.subpath(uri))
       end
@@ -67,6 +69,8 @@ module Sagamore
       #
       # If called with no arguments, returns the resources current query string
       # values as a hash.
+      #
+      # @return [Resource]
       def query(query=nil)
         if query
           uri = self.uri.dup
@@ -79,6 +83,8 @@ module Sagamore
 
       ##
       # Returns a cloned copy of the resource with the same URI.
+      #
+      # @return [Resource]
       def clone(uri=nil)
         self.class.new(client, uri ? uri : self.uri)
       end
@@ -86,6 +92,8 @@ module Sagamore
       ##
       # Returns a new resource with the given embeds added to the query string
       # (via _include params).
+      #
+      # @return [Resource]
       def embed(*embeds)
         embeds = (query['_include'] || []) + embeds
         query('_include' => embeds)

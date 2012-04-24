@@ -19,12 +19,16 @@ module Sagamore
 
       ##
       # Performs a request and returns the number of resources in the collection.
+      #
+      # @return [Integer] Resource count
       def count
         call_client(:count)
       end
 
       ##
       # Returns a new resource with the given filters added to the query string
+      #
+      # @return [Resource]
       def filter(new_filters)
         new_filters = JSON.parse(new_filters) if new_filters.is_a?(String)
         if filters = query['_filter']
@@ -39,6 +43,8 @@ module Sagamore
 
       ##
       # Returns a new resource with the given sorts added to the query string
+      #
+      # @return [Resource]
       def sort(*sorts)
         query('sort' => sorts)
       end
@@ -46,6 +52,8 @@ module Sagamore
       ##
       # Performs a request to get the first result of the first page of the 
       # collection and returns it.
+      #
+      # @return [Hash] The first entry in the response :results array
       def first
         response = query(:per_page => 1, :page => 1).get!
         response[:results].first

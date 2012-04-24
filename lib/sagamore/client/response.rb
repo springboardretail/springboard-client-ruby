@@ -14,6 +14,8 @@ module Sagamore
 
       ##
       # Returns the raw response body as a String.
+      #
+      # @return [String] The raw response body
       def raw_body
         @response.body
       end
@@ -21,17 +23,25 @@ module Sagamore
       ##
       # Returns the parsed response body as a Body object.
       #
-      # Raises a BodyError if the body is not parseable.
+      # @raise [BodyError] If the body is not parseable
+      #
+      # @return [Body] The parsed response body
       def body
         @data ||= parse_body
       end
 
       ##
       # Returns true if the request was successful, else false.
+      #
+      # @return [Boolean]
       def success?
         status < 400
       end
 
+      ##
+      # Delegates missing methods to the underlying Patron::Response.
+      #
+      # @see http://patron.rubyforge.org/Patron/Response.html Patron::Response docs
       def method_missing(method, *args, &block)
         @response.respond_to?(method) ? @response.__send__(method, *args, &block) : super
       end
@@ -39,6 +49,8 @@ module Sagamore
       ##
       # If the response included a 'Location' header, returns a new Resource with
       # a URI set to its value, else nil.
+      #
+      # @return [Resource]
       def resource
         if location = headers['Location']
           @client[headers['Location']]
