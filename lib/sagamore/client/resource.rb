@@ -99,6 +99,22 @@ module Sagamore
         query('_include' => embeds)
       end
 
+      ##
+      # Returns true if a HEAD request to the resource returns a successful response,
+      # false if it returns 404, otherwise raises an exception.
+      #
+      # @raise [RequestFailed] If response is not success or 404
+      #
+      # @return [Boolean]
+      def exists?
+        response = head
+        return true if response.success?
+        return false if response.status == 404
+        error = RequestFailed.new "Request during call to 'exists?' resulted in non-404 error."
+        error.response = response
+        raise error
+      end
+
       include Collection
 
       private

@@ -201,6 +201,34 @@ describe Sagamore::Client::Resource do
       end
     end
 
+    describe "exists?" do
+      let(:response) { mock(Sagamore::Client::Response) }
+
+      it "should return true if the response indicates success" do
+        response.stub!(:success?).and_return(true)
+        client.should_receive(:head).with(resource.uri, false).and_return(response)
+        resource.exists?.should === true
+      end
+
+      it "should return false if the response status is 404" do
+        response.stub!(:status).and_return(404)
+        response.stub!(:success?).and_return(false)
+        client.should_receive(:head).with(resource.uri, false).and_return(response)
+        resource.exists?.should === false
+      end
+
+      it "should raise a RequestFailed exception if the request fails but the status is not 404" do
+        response.stub!(:status).and_return(400)
+        response.stub!(:success?).and_return(false)
+        client.should_receive(:head).with(resource.uri, false).and_return(response)
+        expect { resource.exists? }.to raise_error { |e|
+          e.should be_a Sagamore::Client::RequestFailed
+          e.response.should === response
+          e.message.should == "Request during call to 'exists?' resulted in non-404 error."
+        }
+      end
+    end
+
     describe "empty?" do
       it "should return true if the resource has a count of zero" do
         resource.stub!(:count).and_return 0
