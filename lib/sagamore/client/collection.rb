@@ -26,6 +26,14 @@ module Sagamore
       end
 
       ##
+      # Returns true if count is greater than zero, else false.
+      #
+      # @see #count
+      def empty?
+        count <= 0
+      end
+
+      ##
       # Returns a new resource with the given filters added to the query string
       #
       # @return [Resource]

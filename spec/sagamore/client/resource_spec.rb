@@ -200,5 +200,17 @@ describe Sagamore::Client::Resource do
         end.to raise_error(Sagamore::Client::RequestFailed)
       end
     end
+
+    describe "empty?" do
+      it "should return true if the resource has a count of zero" do
+        resource.stub!(:count).and_return 0
+        resource.empty?.should === true
+      end
+
+      it "should return false if the resource has a count greater than zero" do
+        resource.stub!(:count).and_return 10
+        resource.empty?.should === false
+      end
+    end
   end
 end
