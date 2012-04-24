@@ -71,7 +71,7 @@ describe Sagamore::Client do
     bang_method = "#{method}!"
     describe method do
       it "should call session's #{method}" do
-        session.should_receive(method).with('/relative/path', {})
+        session.should_receive(method).with('/relative/path')
         client.__send__(method, '/relative/path')
       end
 
@@ -92,7 +92,7 @@ describe Sagamore::Client do
       it "should call #{method}" do
         response = mock(Sagamore::Client::Response)
         response.should_receive(:success?).and_return(true)
-        client.should_receive(method).with('/path').and_return(response)
+        client.should_receive(method).with('/path', false).and_return(response)
         client.__send__(bang_method, '/path').should === response
       end
 
@@ -100,7 +100,7 @@ describe Sagamore::Client do
         response = mock(Sagamore::Client::Response)
         response.should_receive(:success?).and_return(false)
         response.should_receive(:status_line).and_return('404 Not Found')
-        client.should_receive(method).with('/path').and_return(response)
+        client.should_receive(method).with('/path', false).and_return(response)
         lambda { client.send(bang_method, '/path') }.should raise_error(Sagamore::Client::RequestFailed)
       end
     end
@@ -111,7 +111,7 @@ describe Sagamore::Client do
     bang_method = "#{method}!"
     describe method do
       it "should call session's #{method}" do
-        session.should_receive(method).with('/relative/path', 'body', {})
+        session.should_receive(method).with('/relative/path', 'body')
         client.__send__(method, '/relative/path', 'body')
       end
 
@@ -123,7 +123,7 @@ describe Sagamore::Client do
 
       it "should serialize the request body as JSON if it is a hash" do
         body_hash = {:key1 => 'val1', :key2 => 'val2'}
-        session.should_receive(method).with('/path', body_hash.to_json, {})
+        session.should_receive(method).with('/path', body_hash.to_json)
         client.__send__(method, '/path', body_hash)
       end
 
@@ -146,7 +146,7 @@ describe Sagamore::Client do
       it "should call #{method}" do
         response = mock(Sagamore::Client::Response)
         response.should_receive(:success?).and_return(true)
-        client.should_receive(method).with('/path', 'body').and_return(response)
+        client.should_receive(method).with('/path', 'body', false).and_return(response)
         client.__send__(bang_method, '/path', 'body').should === response
       end
 
@@ -154,7 +154,7 @@ describe Sagamore::Client do
         response = mock(Sagamore::Client::Response)
         response.should_receive(:success?).and_return(false)
         response.should_receive(:status_line).and_return('404 Not Found')
-        client.should_receive(method).with('/path', 'body').and_return(response)
+        client.should_receive(method).with('/path', 'body', false).and_return(response)
         expect { client.send(bang_method, '/path', 'body') }.to raise_error { |error|
           error.should be_a(Sagamore::Client::RequestFailed)
           error.response.should === response

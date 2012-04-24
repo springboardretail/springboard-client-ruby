@@ -7,7 +7,6 @@ require 'sagamore/client/errors'
 
 module Sagamore
   class Client
-    HTTP_METHODS = Patron::Request::VALID_ACTIONS
     URI = Addressable::URI
 
     attr_reader :session, :base_uri
@@ -23,14 +22,22 @@ module Sagamore
       configure_session(base_uri, opts)
     end
 
+    ##
+    # Returns the underlying Patron::Session
     def session
       @session ||= Patron::Session.new
     end
 
+    ##
+    # Set to true to enable debugging to STDOUT or a string to write to the file
+    # at that path.
     def debug=(debug)
       session.enable_debug(debug == true ? nil : debug)
     end
 
+    ##
+    # Passes the given credentials to the server. Stores the session token on
+    # success and raises an AuthFailed on failure.
     def auth(opts={})
       unless opts[:username] && opts[:password]
         raise "Must specify :username and :password"
@@ -43,42 +50,53 @@ module Sagamore
       response.success? or raise AuthFailed, "Sagamore auth failed"
     end
 
-    def get(uri, headers = {})
-      make_request :get, uri, headers
-    end
+    ##
+    # Performs a HEAD request against the given URI and returns the Response.
+    def head(uri, headers=false); make_request(:head, uri, headers); end
 
-    def head(uri, headers = {})
-      make_request :head, uri, headers
-    end
+    ##
+    # Performs a HEAD request against the given URI. Returns the Response
+    # on success and raises a RequestFailed on failure.
+    def head!(uri, headers=false); raise_on_fail head(uri, headers); end
 
-    def delete(uri, headers = {})
-      make_request :delete, uri, headers
-    end
+    ##
+    # Performs a GET request against the given URI and returns the Response.
+    def get(uri, headers=false); make_request(:get, uri, headers); end
 
-    def post(uri, body, headers = {})
-      make_request :post, uri, headers, body
-    end
+    ##
+    # Performs a GET request against the given URI. Returns the Response
+    # on success and raises a RequestFailed on failure.
+    def get!(uri, headers=false); raise_on_fail get(uri, headers); end
 
-    def put(uri, body, headers = {})
-      make_request :put, uri, headers, body
-    end
+    ##
+    # Performs a DELETE request against the given URI and returns the Response.
+    def delete(uri, headers=false); make_request(:delete, uri, headers); end
 
-    %w{get head post put delete}.each do |http_method|
-      define_method("#{http_method}!") do |*args, &block|
-        response = __send__(http_method, *args, &block)
-        if !response.success?
-          error = RequestFailed.new "Request failed with status: #{response.status_line}"
-          error.response = response
-          raise error
-        end
-        response
-      end
-    end
+    ##
+    # Performs a DELETE request against the given URI. Returns the Response
+    # on success and raises a RequestFailed on failure.
+    def delete!(uri, headers=false); raise_on_fail delete(uri, headers); end
 
-    def parse_request_body(body)
-      body.is_a?(Hash) ? JSON.dump(body) : body
-    end
+    ##
+    # Performs a PUT request against the given URI and returns the Response.
+    def put(uri, body, headers=false); make_request(:put, uri, headers, body); end
 
+    ##
+    # Performs a PUT request against the given URI. Returns the Response
+    # on success and raises a RequestFailed on failure.
+    def put!(uri, body, headers=false); raise_on_fail put(uri, body, headers); end
+
+    ##
+    # Performs a POST request against the given URI and returns the Response.
+    def post(uri, body, headers=false); make_request(:post, uri, headers, body); end
+
+    ##
+    # Performs a POST request against the given URI. Returns the Response
+    # on success and raises a RequestFailed on failure.
+    def post!(uri, body, headers=false); raise_on_fail post(uri, body, headers); end
+
+    ##
+    # Returns a Resource for the given URI path.
     def [](uri)
       Resource.new(self, uri)
     end
@@ -111,13 +129,26 @@ module Sagamore
       get!(uri)['total']
     end
 
-    protected
+    private
 
-    def make_request(method, uri, headers, body=false)
+    def prepare_request_body(body)
+      body.is_a?(Hash) ? JSON.dump(body) : body
+    end
+
+    def make_request(method, uri, headers=false, body=false)
       args = [prepare_uri(uri).to_s]
-      args.push parse_request_body(body) unless body === false
-      args.push headers
+      args.push prepare_request_body(body) unless body === false
+      args.push headers unless headers === false
       new_response session.__send__(method, *args)
+    end
+
+    def raise_on_fail(response)
+      if !response.success?
+        error = RequestFailed.new "Request failed with status: #{response.status_line}"
+        error.response = response
+        raise error
+      end
+      response
     end
 
     def prepare_uri(uri)

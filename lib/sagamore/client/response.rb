@@ -6,18 +6,28 @@ module Sagamore
         @client = client
       end
 
+      ##
+      # Returns the corresponding key from "body".
       def [](key)
         body[key]
       end
 
+      ##
+      # Returns the raw response body as a String.
       def raw_body
         @response.body
       end
 
+      ##
+      # Returns the parsed response body as a Body object.
+      #
+      # Raises a BodyError if the body is not parseable.
       def body
         @data ||= parse_body
       end
 
+      ##
+      # Returns true if the request was successful, else false.
       def success?
         status < 400
       end
@@ -26,6 +36,9 @@ module Sagamore
         @response.respond_to?(method) ? @response.__send__(method, *args, &block) : super
       end
 
+      ##
+      # If the response included a 'Location' header, returns a new Resource with
+      # a URI set to its value, else nil.
       def resource
         if location = headers['Location']
           @client[headers['Location']]

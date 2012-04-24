@@ -1,23 +1,72 @@
+require 'sagamore/client/collection'
+
 module Sagamore
   class Client
     class Resource
       attr_reader :uri, :client
-
-      CLIENT_DELEGATED_METHODS = HTTP_METHODS \
-        + HTTP_METHODS.map{|m| "#{m}!".to_sym} \
-        + [:each, :each_page, :count]
-
-      include ::Enumerable
 
       def initialize(client, uri)
         @client = client
         @uri = URI.join('/', uri.to_s)
       end
 
+      ##
+      # Performs a HEAD request against the resource's URI and returns the Response.
+      def head(headers=false); call_client(:head, headers); end
+
+      ##
+      # Performs a HEAD request against the resource's URI. Returns the Response
+      # on success and raises a RequestFailed on failure.
+      def head!(headers=false); call_client(:head!, headers); end
+
+      ##
+      # Performs a GET request against the resource's URI and returns the Response.
+      def get(headers=false); call_client(:get, headers); end
+
+      ##
+      # Performs a GET request against the resource's URI. Returns the Response
+      # on success and raises a RequestFailed on failure.
+      def get!(headers=false); call_client(:get!, headers); end
+
+      ##
+      # Performs a DELETE request against the resource's URI and returns the Response.
+      def delete(headers=false); call_client(:delete, headers); end
+
+      ##
+      # Performs a DELETE request against the resource's URI. Returns the Response
+      # on success and raises a RequestFailed on failure.
+      def delete!(headers=false); call_client(:delete!, headers); end
+
+      ##
+      # Performs a PUT request against the resource's URI and returns the Response.
+      def put(body, headers=false); call_client(:put, body, headers); end
+
+      ##
+      # Performs a PUT request against the resource's URI. Returns the Response
+      # on success and raises a RequestFailed on failure.
+      def put!(body, headers=false); call_client(:put!, body, headers); end
+
+      ##
+      # Performs a POST request against the resource's URI and returns the Response.
+      def post(body, headers=false); call_client(:post, body, headers); end
+
+      ##
+      # Performs a POST request against the resource's URI. Returns the Response
+      # on success and raises a RequestFailed on failure.
+      def post!(body, headers=false); call_client(:post!, body, headers); end
+
+      ##
+      # Returns a new subordinate resource with the given sub-path.
       def [](uri)
         clone(self.uri.subpath(uri))
       end
 
+      ##
+      # If query is given, returns a new resource where the given query hash
+      # is merged with the existing query string parameters.
+      #
+      # If called with no arguments, returns the resources current query string
+      # values as a hash.
       def query(query=nil)
         if query
           uri = self.uri.dup
@@ -28,48 +77,28 @@ module Sagamore
         end
       end
 
-      def filter(new_filters)
-        new_filters = JSON.parse(new_filters) if new_filters.is_a?(String)
-        if filters = query['_filter']
-          filters = JSON.parse(filters)
-          filters = [filters] unless filters.is_a?(Array)
-          filters.push(new_filters)
-        else
-          filters = new_filters
-        end
-        query('_filter' => filters.to_json)
-      end
-
-      def sort(*sorts)
-        query('sort' => sorts)
-      end
-
+      ##
+      # Returns a cloned copy of the resource with the same URI.
       def clone(uri=nil)
         self.class.new(client, uri ? uri : self.uri)
       end
 
-      def first
-        response = query(:per_page => 1, :page => 1).get!
-        response[:results].first
-      end
-
+      ##
+      # Returns a new resource with the given embeds added to the query string
+      # (via _include params).
       def embed(*embeds)
         embeds = (query['_include'] || []) + embeds
         query('_include' => embeds)
       end
 
-      def while_results(&block)
-        loop do
-          results = get![:results]
-          break if results.nil? || results.empty?
-          results.each(&block)
-        end
-      end
+      include Collection
 
-      CLIENT_DELEGATED_METHODS.each do |method|
-        define_method(method) do |*args, &block|
-          client.__send__(method, *args.unshift(uri), &block)
-        end
+      private
+
+      ##
+      # Calls a client method, passing the URI as the first argument.
+      def call_client(method, *args, &block)
+        client.__send__(method, *args.unshift(uri), &block)
       end
     end
   end

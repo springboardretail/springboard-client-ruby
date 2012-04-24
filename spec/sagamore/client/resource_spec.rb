@@ -92,12 +92,29 @@ describe Sagamore::Client::Resource do
     end
   end
 
-
-  %w{count get put post delete each each_page}.each do |method|
+  %w{count each each_page}.each do |method|
     describe method do
       it "should call the client's #{method} method with the resource's URI" do
         client.should_receive(method).with(resource.uri)
         resource.__send__(method)
+      end
+    end
+  end
+
+  %w{get head delete}.each do |method|
+    describe method do
+      it "should call the client's #{method} method with the resource's URI and a header hash" do
+        client.should_receive(method).with(resource.uri, false)
+        resource.__send__(method)
+      end
+    end
+  end
+
+  %w{put post}.each do |method|
+    describe method do
+      it "should call the client's #{method} method with the resource's URI, the given body, and a headers hash" do
+        client.should_receive(method).with(resource.uri, "body", false)
+        resource.__send__(method, "body")
       end
     end
   end
