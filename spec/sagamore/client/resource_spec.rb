@@ -148,4 +148,32 @@ describe Sagamore::Client::Resource do
         '/some/path?_include[]=thing1&_include[]=thing2&_include[]=thing3'
     end
   end
+
+  describe "while_results" do
+    let(:response_data) {
+      {
+        :status => 200,
+        :body => {:results => [{:id => "Me first!"}, {:id => "Me second!"}]}.to_json
+      }
+    }
+
+    it "should yield each result to the block as long as the response includes results" do
+      results = ["r1", "r2", "r3"]
+
+      request_stub = stub_request(:get, "#{base_url}/some/path").to_return do |req|
+        {:body => {:results => results}.to_json}
+      end
+
+      yielded_results = []
+
+      # timeout in case of endless loop
+      Timeout::timeout(1) do
+        resource.while_results do |result|
+          yielded_results.push results.shift
+        end
+      end
+
+      yielded_results.should == ["r1", "r2", "r3"]
+    end
+  end
 end

@@ -58,6 +58,14 @@ module Sagamore
         query('_include' => embeds)
       end
 
+      def while_results(&block)
+        loop do
+          results = get![:results]
+          break if results.nil? || results.empty?
+          results.each(&block)
+        end
+      end
+
       CLIENT_DELEGATED_METHODS.each do |method|
         define_method(method) do |*args, &block|
           client.__send__(method, *args.unshift(uri), &block)
