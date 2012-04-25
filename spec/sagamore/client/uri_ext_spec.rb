@@ -34,12 +34,12 @@ describe Addressable::URI do
   describe "sagamore_query_values=" do
     it "should preserve empty bracket notation for array params" do
       uri.query = 'sort[]=f1&sort[]=f2'
-      uri.sagamore_query_values = uri.query_values
+      uri.__send__(:sagamore_query_values=, uri.query_values)
       uri.to_s.should == '/relative/path?sort[]=f1&sort[]=f2'
     end
 
     it "should stringify boolean param values" do
-      uri.sagamore_query_values = {:p1 => true, :p2 => false}
+      uri.__send__(:sagamore_query_values=, {:p1 => true, :p2 => false})
       uri.to_s.should == '/relative/path?p1=true&p2=false'
     end
   end

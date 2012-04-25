@@ -1,5 +1,8 @@
 module Sagamore
   class Client
+    ##
+    # Mixin provides {Resource} with special methods for convenient interaction
+    # with collection resources.
     module Collection
       include ::Enumerable
 
@@ -29,6 +32,8 @@ module Sagamore
       # Returns true if count is greater than zero, else false.
       #
       # @see #count
+      #
+      # @return [Boolean]
       def empty?
         count <= 0
       end
@@ -61,7 +66,7 @@ module Sagamore
       # Performs a request to get the first result of the first page of the 
       # collection and returns it.
       #
-      # @return [Hash] The first entry in the response :results array
+      # @return [Body] The first entry in the response :results array
       def first
         response = query(:per_page => 1, :page => 1).get!
         response[:results].first

@@ -5,15 +5,28 @@ require 'json'
 
 require 'sagamore/client/errors'
 
+##
+# Sagamore namespace
 module Sagamore
+  ##
+  # The main point of interaction for the Sagamore Client library.
+  #
+  # Client code must successfully authenticate with the API via the {#auth}
+  # method before calling any HTTP methods or the API will return authorization
+  # errors.
+  #
+  # Provides direct access to the URI-oriented interface via the HTTP methods.
+  # Provides access to the URI-oriented interface via the {#[]} method.
   class Client
+    ##
+    # Alias for {Addressable::URI}
     URI = Addressable::URI
 
-    attr_reader :session, :base_uri
+    ##
+    # @return [Addressable::URI] The client's base URI
+    attr_reader :base_uri
 
     ##
-    # Initialize a Sagamore Client
-    #
     # @param [String] base_uri Base URI
     # @option opts [Boolean, String] :debug Pass true to debug to stdout. Pass a String to debug to given filename.
     # @option opts [Boolean] :insecure Disable SSL certificate verification
@@ -65,14 +78,14 @@ module Sagamore
     end
 
     ##
-    # Performs a HEAD request against the given URI and returns the Response.
+    # Performs a HEAD request against the given URI and returns the {Response}.
     #
     # @return [Response]
     def head(uri, headers=false); make_request(:head, uri, headers); end
 
     ##
-    # Performs a HEAD request against the given URI. Returns the Response
-    # on success and raises a RequestFailed on failure.
+    # Performs a HEAD request against the given URI. Returns the {Response}
+    # on success and raises a {RequestFailed} on failure.
     #
     # @raise [RequestFailed] On error response
     #
@@ -80,14 +93,14 @@ module Sagamore
     def head!(uri, headers=false); raise_on_fail head(uri, headers); end
 
     ##
-    # Performs a GET request against the given URI and returns the Response.
+    # Performs a GET request against the given URI and returns the {Response}.
     #
     # @return [Response]
     def get(uri, headers=false); make_request(:get, uri, headers); end
 
     ##
-    # Performs a GET request against the given URI. Returns the Response
-    # on success and raises a RequestFailed on failure.
+    # Performs a GET request against the given URI. Returns the {Response}
+    # on success and raises a {RequestFailed} on failure.
     #
     # @raise [RequestFailed] On error response
     #
@@ -95,14 +108,14 @@ module Sagamore
     def get!(uri, headers=false); raise_on_fail get(uri, headers); end
 
     ##
-    # Performs a DELETE request against the given URI and returns the Response.
+    # Performs a DELETE request against the given URI and returns the {Response}.
     #
     # @return [Response]
     def delete(uri, headers=false); make_request(:delete, uri, headers); end
 
     ##
-    # Performs a DELETE request against the given URI. Returns the Response
-    # on success and raises a RequestFailed on failure.
+    # Performs a DELETE request against the given URI. Returns the {Response}
+    # on success and raises a {RequestFailed} on failure.
     #
     # @raise [RequestFailed] On error response
     #
@@ -110,14 +123,14 @@ module Sagamore
     def delete!(uri, headers=false); raise_on_fail delete(uri, headers); end
 
     ##
-    # Performs a PUT request against the given URI and returns the Response.
+    # Performs a PUT request against the given URI and returns the {Response}.
     #
     # @return [Response]
     def put(uri, body, headers=false); make_request(:put, uri, headers, body); end
 
     ##
-    # Performs a PUT request against the given URI. Returns the Response
-    # on success and raises a RequestFailed on failure.
+    # Performs a PUT request against the given URI. Returns the {Response}
+    # on success and raises a {RequestFailed} on failure.
     #
     # @raise [RequestFailed] On error response
     #
@@ -125,14 +138,14 @@ module Sagamore
     def put!(uri, body, headers=false); raise_on_fail put(uri, body, headers); end
 
     ##
-    # Performs a POST request against the given URI and returns the Response.
+    # Performs a POST request against the given URI and returns the {Response}.
     #
     # @return [Response]
     def post(uri, body, headers=false); make_request(:post, uri, headers, body); end
 
     ##
-    # Performs a POST request against the given URI. Returns the Response
-    # on success and raises a RequestFailed on failure.
+    # Performs a POST request against the given URI. Returns the {Response}
+    # on success and raises a {RequestFailed} on failure.
     #
     # @raise [RequestFailed] On error response
     #
@@ -147,6 +160,9 @@ module Sagamore
       Resource.new(self, uri)
     end
 
+    ##
+    # Iterates over each page of subordinate resources of the given collection
+    # resource URI and yields the {Response} to the block.
     def each_page(uri)
       uri = URI.parse(uri)
       total_pages = nil
@@ -161,6 +177,9 @@ module Sagamore
       end
     end
 
+    ##
+    # Iterates over each subordinate resource of the given collection resource
+    # URI and yields its representation to the given block.
     def each(uri)
       each_page(uri) do |page|
         page['results'].each do |result|
@@ -168,7 +187,12 @@ module Sagamore
         end
       end
     end
-
+  
+    ##
+    # Returns a count of subordinate resources of the given collection resource
+    # URI.
+    #
+    # @param [#to_s] uri
     def count(uri)
       uri = URI.parse(uri)
       uri.merge_query_values! 'page' => 1, 'per_page' => 1

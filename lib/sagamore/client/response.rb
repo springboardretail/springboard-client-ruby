@@ -1,6 +1,11 @@
 module Sagamore
   class Client
+    ##
+    # An API response including body, headers, and status information.
     class Response
+      ##
+      # @param [Response] response
+      # @param [Client] client
       def initialize(response, client)
         @response = response
         @client = client

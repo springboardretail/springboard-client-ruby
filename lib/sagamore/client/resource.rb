@@ -2,6 +2,19 @@ require 'sagamore/client/collection'
 
 module Sagamore
   class Client
+    ##
+    # An representation of an API resource identified by a URI. Allows
+    # triggering API calls via HTTP methods. Allows constructing new resources
+    # in a chained style by calling the methods that manipulate the URI and
+    # return a new resource.
+    #
+    # @example Chaining
+    #   new_resource = resource.
+    #     filter(:field => 'value').
+    #     sort(:id).
+    #     embed(:related_resource)
+    #
+    # Resources are usually constructed via the Client#[] method.
     class Resource
       ##
       # The resource's URI.
@@ -31,7 +44,7 @@ module Sagamore
 
       ##
       # Performs a HEAD request against the resource's URI. Returns the Response
-      # on success and raises a RequestFailed on failure.
+      # on success and raises a RequestFailed on failure..
       #
       # @raise [RequestFailed] On error response
       #

@@ -1,5 +1,7 @@
 module Sagamore
   class Client
+    ##
+    # Extensions to the Addressable::URI class.
     module URIExt
       ##
       # Returns a new URI with the given subpath appended to it. Ensures a single
@@ -17,14 +19,14 @@ module Sagamore
         self.sagamore_query_values = (self.query_values || {}).merge(normalize_query_hash(values))
       end
 
+      private
+
       def sagamore_query_values=(values)
         retval = self.query_values = normalize_query_hash(values)
         # Hack to strip digits from Addressable::URI's subscript notation
         self.query = self.query.gsub(/\[\d+\]=/, '[]=')
         retval
       end
-
-      private
 
       def normalize_query_hash(hash)
         hash.inject({}) do |copy, (k, v)|
