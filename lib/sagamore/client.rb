@@ -193,6 +193,8 @@ module Sagamore
     # URI.
     #
     # @param [#to_s] uri
+    # @raise [RequestFailed] If the GET fails
+    # @return [Integer] The subordinate resource count
     def count(uri)
       uri = URI.parse(uri)
       uri.merge_query_values! 'page' => 1, 'per_page' => 1
