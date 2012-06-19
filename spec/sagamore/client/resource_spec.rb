@@ -37,23 +37,25 @@ describe Sagamore::Client::Resource do
     end
   end
 
-  describe "query" do
-    describe "when called with a hash" do
-      it "should set the query string parameters" do
-        resource.query(:a => 1, :b => 2).uri.to_s.should == "/some/path?a=1&b=2"
-      end
+  %w{query params}.each do |method|
+    describe method do
+      describe "when called with a hash" do
+        it "should set the query string parameters" do
+          resource.__send__(method, :a => 1, :b => 2).uri.to_s.should == "/some/path?a=1&b=2"
+        end
 
-      it "should URL encode the given keys and values" do
-        resource.query("i have spaces" => "so do i: duh").uri.to_s.
-          should == "/some/path?i%20have%20spaces=so%20do%20i%3A%20duh"
+        it "should URL encode the given keys and values" do
+          resource.__send__(method, "i have spaces" => "so do i: duh").uri.to_s.
+            should == "/some/path?i%20have%20spaces=so%20do%20i%3A%20duh"
+        end
       end
-    end
-    
-    describe "when called without arguments" do
-      it "should return the current query string parameters as a hash" do
-        resource.query.should == {}
-        new_resource = resource.query :a => 1, :b => 2
-        new_resource.query.should == {"a"=>"1", "b"=>"2"}
+      
+      describe "when called without arguments" do
+        it "should return the current query string parameters as a hash" do
+          resource.__send__(method).should == {}
+          new_resource = resource.__send__(method, :a => 1, :b => 2)
+          new_resource.__send__(method).should == {"a"=>"1", "b"=>"2"}
+        end
       end
     end
   end

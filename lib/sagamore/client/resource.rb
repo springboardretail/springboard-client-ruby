@@ -120,22 +120,42 @@ module Sagamore
       end
 
       ##
-      # If query is given, returns a new resource where the given query hash
+      # If called with +params+ as a +Hash+:
+      #
+      # Returns a new resource where the given query hash
       # is merged with the existing query string parameters.
       #
-      # If called with no arguments, returns the resources current query string
-      # values as a hash.
+      # If called with no arguments:
       #
-      # @return [Resource]
-      def query(query=nil)
-        if query
+      # Returns the resource's current query string parameters and values
+      # as a hash.
+      #
+      # @return [Resource, Hash]
+
+      ##
+      # @overload query(params)
+      #   Returns a new resource where the given +params+ hash of parameter
+      #   names and values is merged with the existing query string parameters.
+      #
+      #   @param [Hash] params New query string parameters
+      #   @return [Resource]
+      #
+      # @overload query()
+      #   Returns the resource's current query string parameters and values
+      #   as a hash.
+      #
+      #   @return [Hash]
+      def query(params=nil)
+        if params
           uri = self.uri.dup
-          uri.merge_query_values!(query)
+          uri.merge_query_values!(params)
           clone(uri)
         else
           self.uri.query_values || {}
         end
       end
+
+      alias params query
 
       ##
       # Returns a cloned copy of the resource with the same URI.
