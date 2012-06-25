@@ -56,7 +56,9 @@ module Sagamore::RestClient
 
     def set_session_cookie(additional_headers)
       additional_headers[:cookies] ||= {}
-      additional_headers[:cookies]["rack.session"] = CGI::escape session_cookie
+      if session_cookie
+        additional_headers[:cookies]["rack.session"] = CGI::escape session_cookie
+      end
       additional_headers
     end
 
@@ -70,6 +72,8 @@ module Sagamore::RestClient
       else
         response.cookies['rack.session']
       end
+    rescue RestClient::BadRequest
+      raise ::Sagamore::RestClient::RestError.new("Authentication failed", :unauthorized, nil)
     end
 
     def prepare_request(payload, additional_headers)
