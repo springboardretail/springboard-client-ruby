@@ -23,6 +23,10 @@ module Sagamore
     URI = Addressable::URI
 
     ##
+    # Default number of records per page when iterating over collection resources
+    DEFAULT_PER_PAGE = 20
+
+    ##
     # @return [Addressable::URI] The client's base URI
     attr_reader :base_uri
 
@@ -167,7 +171,7 @@ module Sagamore
       uri = URI.parse(uri)
       total_pages = nil
       page = 1
-      uri.query_values = {'per_page' => 20}.merge(uri.query_values || {})
+      uri.query_values = {'per_page' => DEFAULT_PER_PAGE}.merge(uri.query_values || {})
       while total_pages.nil? or page <= total_pages
         uri.merge_query_values! 'page' => page
         response = get!(uri)
