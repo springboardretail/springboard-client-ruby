@@ -162,4 +162,43 @@ describe Sagamore::Client do
       end
     end
   end
+
+  describe "each_page" do
+    it "should request each page of the collection and yield each response to the block" do
+      responses = (1..3).map do |p|
+        response = mock(Sagamore::Client::Response)
+        response.stub(:[]).with('pages').and_return(3)
+
+        client.should_receive(:get!).with("/things?page=#{p}&per_page=20".to_uri).and_return(response)
+
+        response
+      end
+
+      expect do |block|
+        client.each_page('/things', &block)
+      end.to yield_successive_args(*responses)
+    end
+  end
+
+  describe "each" do
+    it "should request each page of the collection and yield each individual result to the block" do
+      all_results = (1..3).inject([]) do |results, p|
+        response = mock(Sagamore::Client::Response)
+        response.stub(:[]).with('pages').and_return(3)
+
+        page_results = 20.times.map {|i| "Page #{p} result #{i+1}"}
+        results += page_results
+
+        response.stub(:[]).with('results').and_return(page_results)
+
+        client.should_receive(:get!).with("/things?page=#{p}&per_page=20".to_uri).and_return(response)
+
+        results
+      end
+
+      expect do |block|
+        client.each('/things', &block)
+      end.to yield_successive_args(*all_results)
+    end
+  end
 end
