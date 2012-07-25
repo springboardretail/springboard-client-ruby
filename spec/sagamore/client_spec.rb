@@ -58,6 +58,16 @@ describe Sagamore::Client do
       session.should_receive(:insecure=).with(true)
       client.__send__(:configure_session, base_url, :insecure => true)
     end
+
+    it "set the default timeout to 15 seconds" do
+      client.__send__(:configure_session, base_url, {})
+      client.session.timeout.should == 15
+    end
+
+    it "set the default connect timeout to 5 seconds" do
+      client.__send__(:configure_session, base_url, {})
+      client.session.connect_timeout.should == 5
+    end
   end
 
   describe "[]" do

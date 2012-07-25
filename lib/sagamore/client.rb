@@ -242,6 +242,8 @@ module Sagamore
       session.headers['Content-Type'] = 'application/json'
       session.handle_cookies
       session.insecure = opts[:insecure] if opts.has_key?(:insecure)
+      session.timeout = 15
+      session.connect_timeout = 5
       self.debug = opts[:debug] if opts.has_key?(:debug)
     end
   end
