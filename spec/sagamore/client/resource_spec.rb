@@ -15,7 +15,7 @@ describe Sagamore::Client::Resource do
       resource["subpath"].should be_a Sagamore::Client::Resource
       resource["subpath"].object_id.should_not == resource.object_id
     end
-    
+
     it "should return a resource with the given subpath appended to its URI" do
       resource["subpath"].uri.to_s.should == "/some/path/subpath"
     end
@@ -48,8 +48,12 @@ describe Sagamore::Client::Resource do
           resource.__send__(method, "i have spaces" => "so do i: duh").uri.to_s.
             should == "/some/path?i%20have%20spaces=so%20do%20i%3A%20duh"
         end
+
+        it "should add bracket notation for array parameters" do
+          resource.__send__(method, :somearray => [1, 2, 3]).uri.to_s.should == "/some/path?somearray[]=1&somearray[]=2&somearray[]=3"
+        end
       end
-      
+
       describe "when called without arguments" do
         it "should return the current query string parameters as a hash" do
           resource.__send__(method).should == {}
@@ -67,7 +71,7 @@ describe Sagamore::Client::Resource do
           '/some/path?_filter={"a":1,"b":2}'.to_uri
       end
     end
-    
+
     describe "when called multiple times" do
       it "should append args to _filter param as JSON array" do
         resource.filter(:a => 1).filter(:b => 2).filter(:c => 3).uri.should ==
@@ -143,27 +147,27 @@ describe Sagamore::Client::Resource do
 
   describe "embed" do
     it "should support a single embed" do
-      resource.embed(:thing1).uri.to_s.should == 
+      resource.embed(:thing1).uri.to_s.should ==
         '/some/path?_include[]=thing1'
     end
 
     it "should support multiple embeds" do
-      resource.embed(:thing1, :thing2, :thing3).uri.to_s.should == 
+      resource.embed(:thing1, :thing2, :thing3).uri.to_s.should ==
         '/some/path?_include[]=thing1&_include[]=thing2&_include[]=thing3'
     end
 
     it "should merge multiple embed calls" do
-      resource.embed(:thing1, :thing2).embed(:thing3, :thing4).uri.to_s.should == 
+      resource.embed(:thing1, :thing2).embed(:thing3, :thing4).uri.to_s.should ==
         '/some/path?_include[]=thing1&_include[]=thing2&_include[]=thing3&_include[]=thing4'
     end
 
     it "should merge multiple embed calls" do
-      resource.embed(:thing1, :thing2).embed(:thing3, :thing4).uri.to_s.should == 
+      resource.embed(:thing1, :thing2).embed(:thing3, :thing4).uri.to_s.should ==
         '/some/path?_include[]=thing1&_include[]=thing2&_include[]=thing3&_include[]=thing4'
     end
 
     it "should merge a call to embed with a manually added _include query param" do
-      resource.query('_include[]' => :thing1).embed(:thing2, :thing3).uri.to_s.should == 
+      resource.query('_include[]' => :thing1).embed(:thing2, :thing3).uri.to_s.should ==
         '/some/path?_include[]=thing1&_include[]=thing2&_include[]=thing3'
     end
   end
