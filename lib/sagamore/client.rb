@@ -27,6 +27,14 @@ module Sagamore
     DEFAULT_PER_PAGE = 20
 
     ##
+    # Default request timeout in seconds
+    DEFAULT_TIMEOUT = 60
+
+    ##
+    # Default connection timeout in seconds
+    DEFAULT_CONNECT_TIMEOUT = 10
+
+    ##
     # @return [Addressable::URI] The client's base URI
     attr_reader :base_uri
 
@@ -242,8 +250,8 @@ module Sagamore
       session.headers['Content-Type'] = 'application/json'
       session.handle_cookies
       session.insecure = opts[:insecure] if opts.has_key?(:insecure)
-      session.timeout = 15
-      session.connect_timeout = 5
+      session.timeout = DEFAULT_TIMEOUT
+      session.connect_timeout = DEFAULT_CONNECT_TIMEOUT
       self.debug = opts[:debug] if opts.has_key?(:debug)
     end
   end

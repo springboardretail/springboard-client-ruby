@@ -59,14 +59,14 @@ describe Sagamore::Client do
       client.__send__(:configure_session, base_url, :insecure => true)
     end
 
-    it "set the default timeout to 15 seconds" do
+    it "set the default timeout" do
       client.__send__(:configure_session, base_url, {})
-      client.session.timeout.should == 15
+      client.session.timeout.should == Sagamore::Client::DEFAULT_TIMEOUT
     end
 
-    it "set the default connect timeout to 5 seconds" do
+    it "set the default connect timeout" do
       client.__send__(:configure_session, base_url, {})
-      client.session.connect_timeout.should == 5
+      client.session.connect_timeout.should == Sagamore::Client::DEFAULT_CONNECT_TIMEOUT
     end
   end
 
