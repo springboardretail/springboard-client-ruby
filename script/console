@@ -1,1 +1,0 @@
-irb -r ./lib/sagamore-rest-client -r ./lib/sagamore-rest-client/console
