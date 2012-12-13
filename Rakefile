@@ -1,0 +1,16 @@
+require 'bundler/setup'
+Bundler.require(:default, :development)
+
+require 'rspec/core/rake_task'
+
+RSpec::Core::RakeTask.new(:spec)
+
+task :default => :spec
+
+desc "Start a console with a Sagamore::Client instance"
+task :console do
+  require 'sagamore/client'
+  CLIENT = Sagamore::Client.new(ENV['URI'])
+  CLIENT.auth :username => ENV['USER'], :password => ENV['PASSWORD']
+  Pry.start
+end
