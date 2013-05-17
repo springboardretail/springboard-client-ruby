@@ -31,7 +31,7 @@ module Sagamore
       def normalize_query_hash(hash)
         hash.inject({}) do |copy, (k, v)|
           copy[k.to_s] = case v
-            when Hash then stringify_hash_keys(hash)
+            when Hash then normalize_query_hash(v)
             when true, false then v.to_s
             else v end
           copy
