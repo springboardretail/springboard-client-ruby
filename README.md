@@ -1,8 +1,8 @@
 # Sagamore Retail Client [![Build Status](https://travis-ci.org/sagamore/sagamore-client-rb.png)](https://travis-ci.org/sagamore/sagamore-client-rb)
 
-This is the Sagamore Retail client library for Ruby. It provides access to the Sagamore HTTP API.
+This is the [Sagamore Retail](http://sagamoreretail.com/) (a point-of-sale/retail management system) client library for Ruby. It provides access to the Sagamore Retail HTTP API.
 
-It is a wrapper around the [Patron](http://toland.github.com/patron/) HTTP client library.
+It is a wrapper around the [Patron](http://toland.github.com/patron/) HTTP client library. Supports MRI 1.9+.
 
 ## Installation
 
