@@ -1,4 +1,4 @@
-# Sagamore Client
+# Sagamore Client [![Build Status](https://travis-ci.org/sagamore/sagamore-client-rb.png)](https://travis-ci.org/sagamore/sagamore-client-rb)
 
 This is the Sagamore Client library for Ruby. It provides access to the Sagamore HTTP API.
 
