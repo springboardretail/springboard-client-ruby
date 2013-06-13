@@ -44,7 +44,7 @@ describe Addressable::URI do
     end
 
     it "should support hash param values" do
-      uri.__send__(:sagamore_query_values=, {:a => {:b => {c: 123}}})
+      uri.__send__(:sagamore_query_values=, {:a => {:b => {:c => 123}}})
       uri.to_s.should == '/relative/path?a[b][c]=123'
     end
   end

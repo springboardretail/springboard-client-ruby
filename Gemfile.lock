@@ -8,7 +8,7 @@ PATH
       patron (~> 0.4.18)
 
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     ZenTest (4.6.2)
     addressable (2.2.8)
