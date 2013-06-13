@@ -12,8 +12,6 @@ GEM
   specs:
     ZenTest (4.6.2)
     addressable (2.2.8)
-    autotest (4.4.6)
-      ZenTest (>= 4.4.1)
     coderay (1.0.7)
     crack (0.3.1)
     diff-lcs (1.1.3)
@@ -43,7 +41,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  autotest
+  ZenTest
   pry
   rake
   rspec (~> 2.11)
