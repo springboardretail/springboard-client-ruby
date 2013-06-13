@@ -10,5 +10,5 @@ end
 
 group :development do
   gem 'pry'
-  gem 'ZenTest', '>= 4.4.0', '< 4.8.4'
+  gem 'ZenTest'
 end
