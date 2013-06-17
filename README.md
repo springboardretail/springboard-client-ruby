@@ -79,8 +79,6 @@ end
 sagamore[:items].filter('custom@size'=> 'XL')
 ```
 
-See Sagamore's [filtering API docs](https://github.com/sagamore/sagamore-retail/blob/master/api/doc/filtering.md) for more details on filter syntax.
-
 ### Sorting
 Resources have a `sort` method that accepts any number of sort options. Note that each call to sort overwrites any previous sorts.
 
