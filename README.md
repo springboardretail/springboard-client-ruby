@@ -4,6 +4,8 @@ This is the [Sagamore Retail](http://sagamoreretail.com/) (a point-of-sale/retai
 
 It is a wrapper around the [Patron](http://toland.github.com/patron/) HTTP client library. Supports MRI 1.9+.
 
+You can find [documentation here](http://rdoc.info/github/sagamore/sagamore-client-rb).
+
 ## Installation
 
 You need a recent version of libcurl and a sane build environment.
