@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "sagamore-rest-client"
-  s.version = "2.0.3"
+  s.version = "2.0.4"
   s.platform = Gem::Platform::RUBY
   s.authors = ["Sagamore"]
   s.summary = "REST client for use in Sagamore client applications"
