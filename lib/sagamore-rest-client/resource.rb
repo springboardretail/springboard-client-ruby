@@ -94,7 +94,7 @@ module Sagamore::RestClient
         resource = self.class.new(new_url.to_s, self.options)
         resource.session_cookie = session_cookie
         resource
-      elsif response.headers[:content_type] == 'application/json'
+      elsif response.headers[:content_type] =~ /^application\/.*[+]?json/
         JSON.parse(response).to_struct(true)
       else
         response
