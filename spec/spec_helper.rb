@@ -1,3 +1,6 @@
+require 'coveralls'
+Coveralls.wear!
+
 require 'sagamore-client'
 require 'webmock/rspec'
 require 'shared_client_context'
