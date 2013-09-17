@@ -1,5 +1,6 @@
 # Sagamore Retail Client
 
+[![Gem Version](https://badge.fury.io/rb/sagamore-client.png)](http://badge.fury.io/rb/sagamore-client)
 [![Build Status](https://travis-ci.org/sagamore/sagamore-client-rb.png)](https://travis-ci.org/sagamore/sagamore-client-rb)
 [![Code Climate](https://codeclimate.com/github/sagamore/sagamore-client-rb.png)](https://codeclimate.com/github/sagamore/sagamore-client-rb)
 [![Coverage Status](https://coveralls.io/repos/sagamore/sagamore-client-rb/badge.png)](https://coveralls.io/r/sagamore/sagamore-client-rb)
