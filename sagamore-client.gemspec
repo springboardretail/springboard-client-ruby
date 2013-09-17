@@ -2,7 +2,7 @@ Gem::Specification.new do |s|
   s.name              = "sagamore-client"
   s.version           = "3.0.1"
   s.platform          = Gem::Platform::RUBY
-  s.authors           = ["Sagamore"]
+  s.authors           = ["Jay Stotz"]
   s.summary           = "Sagamore client library"
 
   s.required_rubygems_version = ">= 1.3.6"
