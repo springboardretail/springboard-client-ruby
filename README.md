@@ -1,4 +1,9 @@
-# Sagamore Retail Client [![Build Status](https://travis-ci.org/sagamore/sagamore-client-rb.png)](https://travis-ci.org/sagamore/sagamore-client-rb) [![Code Climate](https://codeclimate.com/github/sagamore/sagamore-client-rb.png)](https://codeclimate.com/github/sagamore/sagamore-client-rb) [![Coverage Status](https://coveralls.io/repos/sagamore/sagamore-client-rb/badge.png)](https://coveralls.io/r/sagamore/sagamore-client-rb)  [![Dependency Status](https://gemnasium.com/sagamore/sagamore-client-rb.png)](https://gemnasium.com/sagamore/sagamore-client-rb)
+# Sagamore Retail Client
+
+[![Build Status](https://travis-ci.org/sagamore/sagamore-client-rb.png)](https://travis-ci.org/sagamore/sagamore-client-rb)
+[![Code Climate](https://codeclimate.com/github/sagamore/sagamore-client-rb.png)](https://codeclimate.com/github/sagamore/sagamore-client-rb)
+[![Coverage Status](https://coveralls.io/repos/sagamore/sagamore-client-rb/badge.png)](https://coveralls.io/r/sagamore/sagamore-client-rb)
+[![Dependency Status](https://gemnasium.com/sagamore/sagamore-client-rb.png)](https://gemnasium.com/sagamore/sagamore-client-rb)
 
 This is the [Sagamore Retail](http://sagamoreretail.com/) (a point-of-sale/retail management system) client library for Ruby. It provides access to the Sagamore Retail HTTP API.
 
