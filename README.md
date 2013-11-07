@@ -1,10 +1,10 @@
 # Sagamore Retail Client
 
 [![Gem Version](https://badge.fury.io/rb/sagamore-client.png)](http://badge.fury.io/rb/sagamore-client)
-[![Build Status](https://travis-ci.org/sagamore/sagamore-client-rb.png)](https://travis-ci.org/sagamore/sagamore-client-rb)
-[![Code Climate](https://codeclimate.com/github/sagamore/sagamore-client-rb.png)](https://codeclimate.com/github/sagamore/sagamore-client-rb)
-[![Coverage Status](https://coveralls.io/repos/sagamore/sagamore-client-rb/badge.png)](https://coveralls.io/r/sagamore/sagamore-client-rb)
-[![Dependency Status](https://gemnasium.com/sagamore/sagamore-client-rb.png)](https://gemnasium.com/sagamore/sagamore-client-rb)
+[![Build Status](https://travis-ci.org/springboardretail/springboard-client-rb.png?branch=master)](https://travis-ci.org/springboardretail/springboard-client-rb)
+[![Code Climate](https://codeclimate.com/github/springboardretail/springboard-client-rb.png)](https://codeclimate.com/github/springboardretail/springboard-client-rb)
+[![Coverage Status](https://coveralls.io/repos/springboardretail/springboard-client-rb/badge.png)](https://coveralls.io/r/springboardretail/springboard-client-rb)
+[![Dependency Status](https://gemnasium.com/springboardretail/springboard-client-rb.png)](https://gemnasium.com/springboardretail/springboard-client-rb)
 
 This is the [Sagamore Retail](http://sagamoreretail.com/) (a point-of-sale/retail management system) client library for Ruby. It provides access to the Sagamore Retail HTTP API.
 
