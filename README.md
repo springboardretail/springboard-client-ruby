@@ -20,7 +20,7 @@ Debian/Ubuntu:
 
 ```
 sudo apt-get install build-essential libcurl4-openssl-dev
-gem install springboard-client
+gem install springboard-retail
 ```
 
 ## Connecting
