@@ -10,7 +10,7 @@ This is the [Springboard Retail](http://springboardretail.com/) (a point-of-sale
 
 It is a wrapper around the [Patron](http://toland.github.com/patron/) HTTP client library. Supports MRI 1.9+.
 
-You can find [documentation here](http://rdoc.info/github/springboard/springboard-client-ruby).
+You can find [documentation here](http://rdoc.info/github/springboardretail/springboard-client-ruby).
 
 ## Installation
 
