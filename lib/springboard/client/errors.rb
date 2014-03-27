@@ -1,4 +1,4 @@
-module Sagamore
+module Springboard
   class Client
     ##
     # API request failure

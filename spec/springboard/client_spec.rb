@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Sagamore::Client do
+describe Springboard::Client do
   include_context "client"
 
   describe "session" do
@@ -32,14 +32,14 @@ describe Sagamore::Client do
     it "should raise an AuthFailed if auth fails" do
       stub_request(:post, "#{base_url}/auth/identity/callback").to_return(:status => 401)
       lambda { client.auth(:username => 'someone', :password => 'wrong') }.should \
-        raise_error(Sagamore::Client::AuthFailed, "Sagamore auth failed")
+        raise_error(Springboard::Client::AuthFailed, "Springboard auth failed")
     end
   end
 
   describe "initialize" do
     it "should call configure_session" do
-      Sagamore::Client.any_instance.should_receive(:configure_session).with(base_url, {:x => 'y'})
-      Sagamore::Client.new(base_url, :x => 'y')
+      Springboard::Client.any_instance.should_receive(:configure_session).with(base_url, {:x => 'y'})
+      Springboard::Client.new(base_url, :x => 'y')
     end
   end
 
@@ -61,18 +61,18 @@ describe Sagamore::Client do
 
     it "set the default timeout" do
       client.__send__(:configure_session, base_url, {})
-      client.session.timeout.should == Sagamore::Client::DEFAULT_TIMEOUT
+      client.session.timeout.should == Springboard::Client::DEFAULT_TIMEOUT
     end
 
     it "set the default connect timeout" do
       client.__send__(:configure_session, base_url, {})
-      client.session.connect_timeout.should == Sagamore::Client::DEFAULT_CONNECT_TIMEOUT
+      client.session.connect_timeout.should == Springboard::Client::DEFAULT_CONNECT_TIMEOUT
     end
   end
 
   describe "[]" do
     it "should return a resource object with the given path and client" do
-      client["path"].should be_a Sagamore::Client::Resource
+      client["path"].should be_a Springboard::Client::Resource
     end
   end
 
@@ -85,33 +85,33 @@ describe Sagamore::Client do
         client.__send__(method, '/relative/path')
       end
 
-      it "should return a Sagamore::Client::Response" do
+      it "should return a Springboard::Client::Response" do
         request_stub = stub_request(method, "#{base_url}/relative/path")
         response = client.__send__(method, '/relative/path')
-        response.should be_a Sagamore::Client::Response
+        response.should be_a Springboard::Client::Response
       end
 
       it "should remove redundant base path prefix from URL if present" do
         request_stub = stub_request(method, "#{base_url}/relative/path")
         response = client.__send__(method, '/api/relative/path')
-        response.should be_a Sagamore::Client::Response
+        response.should be_a Springboard::Client::Response
       end
     end
 
     describe bang_method do
       it "should call #{method}" do
-        response = mock(Sagamore::Client::Response)
+        response = mock(Springboard::Client::Response)
         response.should_receive(:success?).and_return(true)
         client.should_receive(method).with('/path', false).and_return(response)
         client.__send__(bang_method, '/path').should === response
       end
 
       it "should raise an exception on failure" do
-        response = mock(Sagamore::Client::Response)
+        response = mock(Springboard::Client::Response)
         response.should_receive(:success?).and_return(false)
         response.should_receive(:status_line).and_return('404 Not Found')
         client.should_receive(method).with('/path', false).and_return(response)
-        lambda { client.send(bang_method, '/path') }.should raise_error(Sagamore::Client::RequestFailed)
+        lambda { client.send(bang_method, '/path') }.should raise_error(Springboard::Client::RequestFailed)
       end
     end
   end
@@ -125,10 +125,10 @@ describe Sagamore::Client do
         client.__send__(method, '/relative/path', 'body')
       end
 
-      it "should return a Sagamore::Client::Response" do
+      it "should return a Springboard::Client::Response" do
         request_stub = stub_request(method, "#{base_url}/relative/path")
         response = client.__send__(method, '/relative/path', 'body')
-        response.should be_a Sagamore::Client::Response
+        response.should be_a Springboard::Client::Response
       end
 
       it "should serialize the request body as JSON if it is a hash" do
@@ -154,19 +154,19 @@ describe Sagamore::Client do
 
     describe bang_method do
       it "should call #{method}" do
-        response = mock(Sagamore::Client::Response)
+        response = mock(Springboard::Client::Response)
         response.should_receive(:success?).and_return(true)
         client.should_receive(method).with('/path', 'body', false).and_return(response)
         client.__send__(bang_method, '/path', 'body').should === response
       end
 
       it "should raise an exception on failure" do
-        response = mock(Sagamore::Client::Response)
+        response = mock(Springboard::Client::Response)
         response.should_receive(:success?).and_return(false)
         response.should_receive(:status_line).and_return('404 Not Found')
         client.should_receive(method).with('/path', 'body', false).and_return(response)
         expect { client.send(bang_method, '/path', 'body') }.to raise_error { |error|
-          error.should be_a(Sagamore::Client::RequestFailed)
+          error.should be_a(Springboard::Client::RequestFailed)
           error.response.should === response
         }
       end
@@ -176,7 +176,7 @@ describe Sagamore::Client do
   describe "each_page" do
     it "should request each page of the collection and yield each response to the block" do
       responses = (1..3).map do |p|
-        response = mock(Sagamore::Client::Response)
+        response = mock(Springboard::Client::Response)
         response.stub(:[]).with('pages').and_return(3)
 
         client.should_receive(:get!).with("/things?page=#{p}&per_page=20".to_uri).and_return(response)
@@ -193,7 +193,7 @@ describe Sagamore::Client do
   describe "each" do
     it "should request each page of the collection and yield each individual result to the block" do
       all_results = (1..3).inject([]) do |results, p|
-        response = mock(Sagamore::Client::Response)
+        response = mock(Springboard::Client::Response)
         response.stub(:[]).with('pages').and_return(3)
 
         page_results = 20.times.map {|i| "Page #{p} result #{i+1}"}

@@ -1,4 +1,4 @@
-module Sagamore
+module Springboard
   class Client
     ##
     # An API response including body, headers, and status information.

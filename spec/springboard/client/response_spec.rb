@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Sagamore::Client::Response do
+describe Springboard::Client::Response do
   include_context "client"
 
   let(:raw_body) { '{"key":"value"}' }
@@ -8,12 +8,12 @@ describe Sagamore::Client::Response do
   let(:status_code) { 200 }
   let(:path) { '/path' }
   let(:patron_response) { Patron::Response.new(path, status_code, 0, raw_headers, raw_body) }
-  let(:response) { Sagamore::Client::Response.new(patron_response, client) }
+  let(:response) { Springboard::Client::Response.new(patron_response, client) }
 
   describe "body" do
     describe "if raw body is valid JSON" do
-      it "should return a Sagamore::Client::Body" do
-        response.body.should be_a Sagamore::Client::Body
+      it "should return a Springboard::Client::Body" do
+        response.body.should be_a Springboard::Client::Body
       end
 
       it "should wrap the parsed response body" do
@@ -25,7 +25,7 @@ describe Sagamore::Client::Response do
       let(:raw_body) { 'I am not JSON!' }
       it "should raise an informative error" do
         expect { response.body }.to raise_error \
-          Sagamore::Client::BodyError,
+          Springboard::Client::BodyError,
           "Can't parse response body. (Hint: Try the raw_body method.)"
       end
     end
@@ -34,7 +34,7 @@ describe Sagamore::Client::Response do
       let(:raw_body) { '' }
       it "should raise an informative error" do
         expect { response.body }.to raise_error \
-          Sagamore::Client::BodyError,
+          Springboard::Client::BodyError,
           "Response body is empty. (Hint: If you just created a new resource, try: response.resource.get)"
       end
     end
@@ -56,8 +56,8 @@ describe Sagamore::Client::Response do
     describe "when Location header is returned" do
       let(:raw_headers) { 'Location: /new/path' }
 
-      it "should be a Sagamore::Client::Resource" do
-        response.resource.should be_a Sagamore::Client::Resource
+      it "should be a Springboard::Client::Resource" do
+        response.resource.should be_a Springboard::Client::Resource
       end
 
       it "should have the Location header value as its URL" do

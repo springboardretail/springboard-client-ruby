@@ -1,7 +1,7 @@
 require 'coveralls'
 Coveralls.wear!
 
-require 'sagamore-client'
+require 'springboard-retail'
 require 'webmock/rspec'
 require 'shared_client_context'
 

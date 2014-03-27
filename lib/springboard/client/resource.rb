@@ -1,6 +1,6 @@
-require 'sagamore/client/collection'
+require 'springboard/client/collection'
 
-module Sagamore
+module Springboard
   class Client
     ##
     # An representation of an API resource identified by a URI. Allows
@@ -23,13 +23,13 @@ module Sagamore
       attr_reader :uri
       
       ##
-      # The underlying Sagamore Client.
+      # The underlying Springboard Client.
       #
       # @return [Client]
       attr_reader :client
 
       ##
-      # @param [Sagamore::Client] client
+      # @param [Springboard::Client] client
       # @param [Addressable::URI, #to_s] uri
       def initialize(client, uri)
         @client = client

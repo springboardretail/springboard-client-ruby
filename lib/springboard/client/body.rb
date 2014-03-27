@@ -1,6 +1,6 @@
 require 'hashie'
 
-module Sagamore
+module Springboard
   class Client
     ##
     # An indifferent Hash to represent parsed response bodies.

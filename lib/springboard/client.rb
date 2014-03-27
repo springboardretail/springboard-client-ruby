@@ -3,13 +3,13 @@ require 'patron'
 require 'addressable/uri'
 require 'json'
 
-require 'sagamore/client/errors'
+require 'springboard/client/errors'
 
 ##
-# Sagamore namespace
-module Sagamore
+# Springboard namespace
+module Springboard
   ##
-  # The main point of interaction for the Sagamore Client library.
+  # The main point of interaction for the Springboard Client library.
   #
   # Client code must successfully authenticate with the API via the {#auth}
   # method before calling any HTTP methods or the API will return authorization
@@ -75,8 +75,8 @@ module Sagamore
     #
     # @return [true]
     #
-    # @option opts [String] :username Sagamore username
-    # @option opts [String] :password Sagamore password
+    # @option opts [String] :username Springboard username
+    # @option opts [String] :password Springboard password
     def auth(opts={})
       unless opts[:username] && opts[:password]
         raise "Must specify :username and :password"
@@ -86,7 +86,7 @@ module Sagamore
         :password => opts[:password]
       response = post '/auth/identity/callback', body,
         'Content-Type' => 'application/x-www-form-urlencoded'
-      response.success? or raise AuthFailed, "Sagamore auth failed"
+      response.success? or raise AuthFailed, "Springboard auth failed"
     end
 
     ##
@@ -257,7 +257,7 @@ module Sagamore
   end
 end
 
-require 'sagamore/client/resource'
-require 'sagamore/client/response'
-require 'sagamore/client/body'
-require 'sagamore/client/uri_ext'
+require 'springboard/client/resource'
+require 'springboard/client/response'
+require 'springboard/client/body'
+require 'springboard/client/uri_ext'

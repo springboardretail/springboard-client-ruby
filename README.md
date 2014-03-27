@@ -1,16 +1,16 @@
-# Sagamore Retail Client
+# Springboard Retail Client
 
-[![Gem Version](https://badge.fury.io/rb/sagamore-client.png)](http://badge.fury.io/rb/sagamore-client)
-[![Build Status](https://travis-ci.org/springboardretail/springboard-client-rb.png?branch=master)](https://travis-ci.org/springboardretail/springboard-client-rb)
-[![Code Climate](https://codeclimate.com/github/springboardretail/springboard-client-rb.png)](https://codeclimate.com/github/springboardretail/springboard-client-rb)
-[![Coverage Status](https://coveralls.io/repos/springboardretail/springboard-client-rb/badge.png)](https://coveralls.io/r/springboardretail/springboard-client-rb)
-[![Dependency Status](https://gemnasium.com/springboardretail/springboard-client-rb.png)](https://gemnasium.com/springboardretail/springboard-client-rb)
+[![Gem Version](https://badge.fury.io/rb/springboard-retail.png)](http://badge.fury.io/rb/springboard-retail)
+[![Build Status](https://travis-ci.org/springboardretail/springboard-client-ruby.png?branch=master)](https://travis-ci.org/springboardretail/springboard-client-ruby)
+[![Code Climate](https://codeclimate.com/github/springboardretail/springboard-client-ruby.png)](https://codeclimate.com/github/springboardretail/springboard-client-ruby)
+[![Coverage Status](https://coveralls.io/repos/springboardretail/springboard-client-ruby/badge.png)](https://coveralls.io/r/springboardretail/springboard-client-ruby)
+[![Dependency Status](https://gemnasium.com/springboardretail/springboard-client-ruby.png)](https://gemnasium.com/springboardretail/springboard-client-ruby)
 
-This is the [Sagamore Retail](http://sagamoreretail.com/) (a point-of-sale/retail management system) client library for Ruby. It provides access to the Sagamore Retail HTTP API.
+This is the [Springboard Retail](http://springboardretail.com/) (a point-of-sale/retail management system) client library for Ruby. It provides access to the Springboard Retail HTTP API.
 
 It is a wrapper around the [Patron](http://toland.github.com/patron/) HTTP client library. Supports MRI 1.9+.
 
-You can find [documentation here](http://rdoc.info/github/sagamore/sagamore-client-rb).
+You can find [documentation here](http://rdoc.info/github/springboard/springboard-client-ruby).
 
 ## Installation
 
@@ -20,25 +20,25 @@ Debian/Ubuntu:
 
 ```
 sudo apt-get install build-essential libcurl4-openssl-dev
-gem install sagamore-client
+gem install springboard-client
 ```
 
 ## Connecting
 
 ```ruby
-sagamore = Sagamore::Client.new 'http://example.sagamore.us/api'
-sagamore.auth :username => 'user', :password => 'secret'
+springboard = Springboard::Client.new 'http://example.springboard.us/api'
+springboard.auth :username => 'user', :password => 'secret'
 ```
 
 ## Resource oriented
 
 ```ruby
-resource = sagamore[:items][1234]
+resource = springboard[:items][1234]
 response = resource.get
 response = resource.delete
 
 # Query string generation:
-resource1 = sagamore[:items]
+resource1 = springboard[:items]
 resource2 = resource.query(:key1 => 'val1', 'key with spaces' => 'val with spaces')
 resource2.uri.to_s
 # => "/items?key%20with%20spaces=val%20with%20spaces&key1=val1"
@@ -47,9 +47,9 @@ resource2.uri.to_s
 ## URI oriented
 
 ```ruby
-response = sagamore.get '/items/1234'
-response = sagamore.delete '/items/1234'
-item_count = sagamore.count '/items'
+response = springboard.get '/items/1234'
+response = springboard.delete '/items/1234'
+item_count = springboard.count '/items'
 ```
 
 ## Collection Resources
@@ -58,33 +58,33 @@ item_count = sagamore.count '/items'
 Resources include Ruby's Enumerable module for easy iteration over collections:
 
 ```ruby
-sagamore[:items].each do |item|
+springboard[:items].each do |item|
   puts item['description']
 end
 
-item_count = sagamore[:items].count
+item_count = springboard[:items].count
 
-usernames = sagamore[:users].map {|user| user['login']}
+usernames = springboard[:users].map {|user| user['login']}
 ```
 
 ### Filtering
-Resources have a `filter` method that support's Sagamore's advanced filter syntax:
+Resources have a `filter` method that support's Springboard's advanced filter syntax:
 
 ```ruby
-active_users = sagamore[:users].filter(:active => true)
+active_users = springboard[:users].filter(:active => true)
 active_users.each do |user|
   # do something with each active user
 end
 
 # filter returns a new resource which allows for chaining:
-items = sagamore[:items]
+items = springboard[:items]
 active_items = items.filter(:active => true)
 active_items.filter(:price => {'$gt' => 10}).each do |item|
    # ...
 end
 
 # filtering custom fields:
-sagamore[:items].filter('custom@size'=> 'XL')
+springboard[:items].filter('custom@size'=> 'XL')
 ```
 
 ### Sorting
@@ -162,20 +162,20 @@ passed through untouched:
 
 ```ruby
 # this:
-sagamore[:some_collection].post :a => 1, :b => 2
+springboard[:some_collection].post :a => 1, :b => 2
 
 # is equivalent to this:
-sagamore[:some_collection].post '{"a":1,"b":2}'
+springboard[:some_collection].post '{"a":1,"b":2}'
 ```
 
 ## Response
 
 ```ruby
-response = sagamore[:items][1].get
+response = springboard[:items][1].get
 
 response.status # Response status code as an Integer
 response.success? # true/false depending on whether 'status' indicates non-error
-response.body # Returns a Sagamore::Client::Body object (see below)
+response.body # Returns a Springboard::Client::Body object (see below)
 response.raw_body # Returns the raw response body as a string
 response[:some_key] # Returns the corresponding key from 'body'
 response.headers # Response headers as a Hash
@@ -222,17 +222,17 @@ response.raw_body
 All HTTP request methods have a bang variant that raises an exception on failure:
 
 ```ruby
-response = sagamore[:i_dont_exist].get
+response = springboard[:i_dont_exist].get
 response.status
 # => 404
 
-sagamore[:i_dont_exist].get!
-# Raises Sagamore::Client::RequestFailed exception
+springboard[:i_dont_exist].get!
+# Raises Springboard::Client::RequestFailed exception
 
 # To access the response from the exception:
 begin
-  sagamore[:i_dont_exist].get!
-rescue Sagamore::Client::RequestFailed => error
+  springboard[:i_dont_exist].get!
+rescue Springboard::Client::RequestFailed => error
   puts error.response.status
 end
 # => 404
@@ -249,5 +249,5 @@ client.debug = true
 client.debug = '/path/to/file.log'
 
 # Same values can be passed via :debug option to client constructor
-client = Sagamore::Client.new '<url>', :debug => true
+client = Springboard::Client.new '<url>', :debug => true
 ```

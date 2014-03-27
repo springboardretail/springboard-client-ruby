@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sagamore-client (3.0.3)
+    springboard-retail (3.0.4)
       addressable (>= 2.2.8)
       hashie
       json (>= 1.7.4)
@@ -62,5 +62,5 @@ DEPENDENCIES
   pry
   rake
   rspec (~> 2.11)
-  sagamore-client!
+  springboard-retail!
   webmock

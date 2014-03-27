@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Sagamore::Client::Resource do
+describe Springboard::Client::Resource do
   include_context "client"
 
   let(:resource_path) { '/some/path' }
-  let(:resource) { Sagamore::Client::Resource.new(client, resource_path) }
+  let(:resource) { Springboard::Client::Resource.new(client, resource_path) }
 
   def parse_uri(uri)
     Addressable::URI.parse(uri)
@@ -12,7 +12,7 @@ describe Sagamore::Client::Resource do
 
   describe "[]" do
     it "should return a new resource" do
-      resource["subpath"].should be_a Sagamore::Client::Resource
+      resource["subpath"].should be_a Springboard::Client::Resource
       resource["subpath"].object_id.should_not == resource.object_id
     end
 
@@ -203,12 +203,12 @@ describe Sagamore::Client::Resource do
           resource.while_results do |result|
             # nothing
           end
-        end.to raise_error(Sagamore::Client::RequestFailed)
+        end.to raise_error(Springboard::Client::RequestFailed)
       end
     end
 
     describe "exists?" do
-      let(:response) { mock(Sagamore::Client::Response) }
+      let(:response) { mock(Springboard::Client::Response) }
 
       it "should return true if the response indicates success" do
         response.stub!(:success?).and_return(true)
@@ -228,7 +228,7 @@ describe Sagamore::Client::Resource do
         response.stub!(:success?).and_return(false)
         client.should_receive(:head).with(resource.uri, false).and_return(response)
         expect { resource.exists? }.to raise_error { |e|
-          e.should be_a Sagamore::Client::RequestFailed
+          e.should be_a Springboard::Client::RequestFailed
           e.response.should === response
           e.message.should == "Request during call to 'exists?' resulted in non-404 error."
         }

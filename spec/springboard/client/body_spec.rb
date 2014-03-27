@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Sagamore::Client::Body do
+describe Springboard::Client::Body do
   let(:hash) { {"key1" => "val1", "key2" => {"subkey1" => "subval1"}} }
-  let(:body) { Sagamore::Client::Body.new(hash)}
+  let(:body) { Springboard::Client::Body.new(hash)}
 
   describe "[]" do
     it "should support string keys" do

@@ -12,9 +12,9 @@ describe Addressable::URI do
   end
 
   describe "merge_query_values!" do
-    it "should call sagamore_query_values=" do
+    it "should call springboard_query_values=" do
       uri.query_values = {'a' => '1'}
-      uri.should_receive(:sagamore_query_values=).with({'a' => '1', 'b' => '2'})
+      uri.should_receive(:springboard_query_values=).with({'a' => '1', 'b' => '2'})
       uri.merge_query_values! 'b' => '2'
     end
 
@@ -31,20 +31,20 @@ describe Addressable::URI do
     end
   end
 
-  describe "sagamore_query_values=" do
+  describe "springboard_query_values=" do
     it "should preserve empty bracket notation for array params" do
       uri.query = 'sort[]=f1&sort[]=f2'
-      uri.__send__(:sagamore_query_values=, uri.query_values)
+      uri.__send__(:springboard_query_values=, uri.query_values)
       uri.to_s.should == '/relative/path?sort[]=f1&sort[]=f2'
     end
 
     it "should stringify boolean param values" do
-      uri.__send__(:sagamore_query_values=, {:p1 => true, :p2 => false})
+      uri.__send__(:springboard_query_values=, {:p1 => true, :p2 => false})
       uri.to_s.should == '/relative/path?p1=true&p2=false'
     end
 
     it "should support hash param values" do
-      uri.__send__(:sagamore_query_values=, {:a => {:b => {:c => 123}}})
+      uri.__send__(:springboard_query_values=, {:a => {:b => {:c => 123}}})
       uri.to_s.should == '/relative/path?a[b][c]=123'
     end
   end
