@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    springboard-retail (3.0.4)
+    springboard-retail (4.0.0)
       addressable (>= 2.2.8)
       hashie
       json (>= 1.7.4)

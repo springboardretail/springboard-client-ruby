@@ -183,7 +183,7 @@ describe Springboard::Client::Resource do
       yielded_results = []
 
       # timeout in case of endless loop
-      Timeout::timeout(1) do
+      Timeout::timeout(10) do
         resource.while_results do |result|
           yielded_results.push results.shift
         end
@@ -198,7 +198,7 @@ describe Springboard::Client::Resource do
       end
 
       # timeout in case of endless loop
-      Timeout::timeout(1) do
+      Timeout::timeout(10) do
         expect do
           resource.while_results do |result|
             # nothing
