@@ -26,7 +26,8 @@ gem install springboard-retail
 ## Connecting
 
 ```ruby
-springboard = Springboard::Client.new 'http://example.springboard.us/api'
+require 'springboard-retail'
+springboard = Springboard::Client.new 'https://example.myspringboard.us/api'
 springboard.auth :username => 'user', :password => 'secret'
 ```
 
