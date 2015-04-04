@@ -5,7 +5,7 @@ PATH
       addressable (~> 2.2.8)
       hashie
       json (>= 1.7.4)
-      patron (>= 0.4.18)
+      patron (= 0.4.18)
 
 GEM
   remote: https://rubygems.org/
@@ -28,7 +28,7 @@ GEM
     mime-types (2.4.3)
     multi_json (1.11.0)
     netrc (0.10.3)
-    patron (0.4.20)
+    patron (0.4.18)
     pry (0.10.1)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
