@@ -4,7 +4,7 @@ gemspec
 
 group :test do
   gem 'rake'
-  gem 'rspec', '~> 2.11'
+  gem 'rspec', '~> 3.2'
   gem 'webmock', :require => false
   gem 'coveralls', :require => false
 end
