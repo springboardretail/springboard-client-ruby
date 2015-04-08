@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'json', '>= 1.7.4'
   s.add_runtime_dependency 'hashie'
 
-  s.files         = `git ls-files`.split('\n')
+  s.files         = `git ls-files`.split("\n")
 
   s.require_path = 'lib'
 end
