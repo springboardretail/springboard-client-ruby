@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    springboard-retail (4.0.0)
+    springboard-retail (4.0.1)
       addressable (~> 2.2.8)
       hashie
       json (>= 1.7.4)
@@ -22,7 +22,7 @@ GEM
       safe_yaml (~> 1.0.0)
     diff-lcs (1.2.5)
     docile (1.1.5)
-    hashie (3.4.0)
+    hashie (3.4.1)
     json (1.8.2)
     method_source (0.8.2)
     mime-types (2.4.3)
