@@ -42,6 +42,7 @@ module Springboard
     # @param [String] base_uri Base URI
     # @option opts [Boolean, String] :debug Pass true to debug to stdout. Pass a String to debug to given filename.
     # @option opts [Boolean] :insecure Disable SSL certificate verification
+    # @option opts [String] :token Springboard API Token
     def initialize(base_uri, opts={})
       @base_uri = URI.parse(base_uri)
       configure_session(base_uri, opts)
@@ -69,6 +70,7 @@ module Springboard
     end
 
     ##
+    # DEPRECATED: Please use token instead
     # Passes the given credentials to the server, storing the session token on success.
     #
     # @raise [AuthFailed] If the credentials were invalid or the server returned an error
@@ -78,6 +80,8 @@ module Springboard
     # @option opts [String] :username Springboard username
     # @option opts [String] :password Springboard password
     def auth(opts={})
+      warn "[DEPRECATION] `auth` is deprecated. Please use `Springboard::Client.new '#{base_uri}', :token => 'secret_token'` instead."
+
       unless opts[:username] && opts[:password]
         raise "Must specify :username and :password"
       end
@@ -199,7 +203,7 @@ module Springboard
         end
       end
     end
-  
+
     ##
     # Returns a count of subordinate resources of the given collection resource
     # URI.
@@ -248,6 +252,7 @@ module Springboard
     def configure_session(base_url, opts)
       session.base_url = base_url
       session.headers['Content-Type'] = 'application/json'
+      session.headers['Authorization'] = "Bearer #{opts[:token]}" if opts[:token]
       session.handle_cookies
       session.insecure = opts[:insecure] if opts.has_key?(:insecure)
       session.timeout = DEFAULT_TIMEOUT
