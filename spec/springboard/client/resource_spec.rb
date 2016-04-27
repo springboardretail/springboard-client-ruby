@@ -6,10 +6,6 @@ describe Springboard::Client::Resource do
   let(:resource_path) { '/some/path' }
   let(:resource) { Springboard::Client::Resource.new(client, resource_path) }
 
-  def parse_uri(uri)
-    Addressable::URI.parse(uri)
-  end
-
   describe "[]" do
     it "should return a new resource" do
       expect(resource["subpath"]).to be_a Springboard::Client::Resource
