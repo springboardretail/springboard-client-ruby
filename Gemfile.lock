@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    springboard-retail (4.0.1)
+    springboard-retail (4.1.0)
       addressable (~> 2.2.8)
       hashie
       json (>= 1.7.4)
@@ -22,8 +22,8 @@ GEM
       safe_yaml (~> 1.0.0)
     diff-lcs (1.2.5)
     docile (1.1.5)
-    hashie (3.4.1)
-    json (1.8.2)
+    hashie (3.4.3)
+    json (1.8.3)
     method_source (0.8.2)
     mime-types (2.4.3)
     multi_json (1.11.0)
@@ -75,3 +75,6 @@ DEPENDENCIES
   rspec (~> 3.2)
   springboard-retail!
   webmock
+
+BUNDLED WITH
+   1.11.2
