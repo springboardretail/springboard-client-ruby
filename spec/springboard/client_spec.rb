@@ -76,6 +76,21 @@ describe Springboard::Client do
     end
   end
 
+  describe "debug=" do
+    context "with a file path" do
+      it "should pass the path to enable_debug on the Patron session" do
+        expect(client.session).to receive(:enable_debug).with('/path/to/log')
+        client.debug = '/path/to/log'
+      end
+    end
+
+    context "with true" do
+      it "should pass nil to enable_debug on the Patron session" do
+        expect(client.session).to receive(:enable_debug).with(nil)
+        client.debug = true
+      end
+    end
+  end
 
   [:get, :head, :delete].each do |method|
     bang_method = "#{method}!"
@@ -209,6 +224,16 @@ describe Springboard::Client do
       expect do |block|
         client.each('/things', &block)
       end.to yield_successive_args(*all_results)
+    end
+  end
+
+  describe "count" do
+    it "should request the first page/record of the collection and return the total" do
+      response = double(Springboard::Client::Response)
+      allow(response).to receive(:[]).with('total').and_return(17)
+      expect(client).to receive(:get!).with("/things?page=1&per_page=1".to_uri)
+        .and_return(response)
+      expect(client.count('/things')).to eq(17)
     end
   end
 end
