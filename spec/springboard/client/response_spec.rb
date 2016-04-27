@@ -7,7 +7,10 @@ describe Springboard::Client::Response do
   let(:raw_headers) { 'X-Custom-Header: Hi' }
   let(:status_code) { 200 }
   let(:path) { '/path' }
-  let(:patron_response) { Patron::Response.new(path, status_code, 0, raw_headers, raw_body) }
+  let(:patron_response) do
+    header_data = "HTTP/1.1 #{status_code}\r\n#{raw_headers}"
+    Patron::Response.new(path, status_code, 0, header_data, raw_body)
+  end
   let(:response) { Springboard::Client::Response.new(patron_response, client) }
 
   describe "body" do
