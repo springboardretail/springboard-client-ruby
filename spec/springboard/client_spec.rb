@@ -68,6 +68,19 @@ describe Springboard::Client do
       client.__send__(:configure_session, base_url, {})
       expect(client.session.connect_timeout).to eq(Springboard::Client::DEFAULT_CONNECT_TIMEOUT)
     end
+
+    context 'headers' do
+      let(:headers) { double('headers') }
+      before do
+        allow(session).to receive(:headers).and_return(headers)
+      end
+
+      it 'sets Content-Type header' do
+        expect(headers).to receive(:[]=).once.with('Content-Type', 'application/json')
+        expect(headers).to receive(:[]=).once.with('Authorization', 'Bearer token')
+        client.__send__(:configure_session, base_url, :token => 'token')
+      end
+    end
   end
 
   describe "[]" do
