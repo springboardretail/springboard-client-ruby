@@ -11,6 +11,8 @@ GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.2.8)
+    codeclimate-test-reporter (1.0.8)
+      simplecov (<= 0.13)
     coderay (1.1.0)
     coveralls (0.7.11)
       multi_json (~> 1.10)
@@ -69,6 +71,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  codeclimate-test-reporter (~> 1.0.0)
   coveralls
   pry
   rake
@@ -77,4 +80,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   1.11.2
+   1.14.4

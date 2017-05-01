@@ -7,6 +7,7 @@ group :test do
   gem 'rspec', '~> 3.2'
   gem 'webmock', :require => false
   gem 'coveralls', :require => false
+  gem 'codeclimate-test-reporter', '~> 1.0.0'
 end
 
 group :development do
