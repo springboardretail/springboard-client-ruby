@@ -1,3 +1,5 @@
+require_relative 'uri_multiple_query_values'
+
 module Springboard
   class Client
     ##
