@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'patron'
-require 'addressable/uri'
 require 'json'
 
 require 'springboard/client/errors'
@@ -18,10 +17,6 @@ module Springboard
   # Provides direct access to the URI-oriented interface via the HTTP methods.
   # Provides access to the URI-oriented interface via the {#[]} method.
   class Client
-    ##
-    # Alias for {Addressable::URI}
-    URI = Addressable::URI
-
     ##
     # Default number of records per page when iterating over collection resources
     DEFAULT_PER_PAGE = 20
@@ -85,7 +80,7 @@ module Springboard
       unless opts[:username] && opts[:password]
         raise "Must specify :username and :password"
       end
-      body = URI.form_encode \
+      body = ::Addressable::URI.form_encode \
         :auth_key => opts[:username],
         :password => opts[:password]
       response = post '/auth/identity/callback', body,
@@ -265,4 +260,4 @@ end
 require 'springboard/client/resource'
 require 'springboard/client/response'
 require 'springboard/client/body'
-require 'springboard/client/uri_ext'
+require 'springboard/client/uri'

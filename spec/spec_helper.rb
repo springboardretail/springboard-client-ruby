@@ -12,6 +12,6 @@ end
 
 class String
   def to_uri
-    Addressable::URI.parse(self)
+    Springboard::Client::URI.parse(self)
   end
 end
