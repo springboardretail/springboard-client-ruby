@@ -1,13 +1,42 @@
 require 'spec_helper'
 
-describe Addressable::URI do
-  let(:uri) { Addressable::URI.parse('/relative/path') }
+describe Springboard::Client::URI do
+  let(:uri) { described_class.parse('/relative/path') }
 
   describe "subpath" do
     it "should return a new URI with the path relative to the receiver" do
-      expect(uri.subpath('other')).to eq(Addressable::URI.parse('/relative/path/other'))
-      expect(uri.subpath('/other')).to eq(Addressable::URI.parse('/relative/path/other'))
-      uri.subpath(Addressable::URI.parse('/other')) == Addressable::URI.parse('/relative/path/other')
+      expect(uri.subpath('other')).to eq(described_class.parse('/relative/path/other'))
+      expect(uri.subpath('/other')).to eq(described_class.parse('/relative/path/other'))
+      uri.subpath(described_class.parse('/other')) == described_class.parse('/relative/path/other')
+    end
+  end
+
+  describe "parse" do
+    it "should return a URI based on the given string" do
+      uri = described_class.parse('/some_path')
+      expect(uri).to be_a(described_class)
+      expect(uri.to_s).to eq('/some_path')
+    end
+  end
+
+  describe "==" do
+    it "should consider two URIs parsed from the same string equal" do
+      expect(
+        described_class.parse('http://example.com/some_path?a=1&b=2') ==
+        described_class.parse('http://example.com/some_path?a=1&b=2')
+      ).to be(true)
+    end
+
+    it "should consider two URIs parsed from different strings not equal" do
+      expect(
+        described_class.parse('http://example.com/some_path?a=1&b=2') ==
+        described_class.parse('http://example.com/some_path?a=1&c=3')
+      ).to be(false)
+
+      expect(
+        described_class.parse('http://foo.example.com') ==
+        described_class.parse('http://bar.example.com')
+      ).to be(false)
     end
   end
 
