@@ -19,9 +19,9 @@ module Springboard
       ##
       # The resource's URI.
       #
-      # @return [Addressable::URI]
+      # @return [URI]
       attr_reader :uri
-      
+
       ##
       # The underlying Springboard Client.
       #
@@ -30,10 +30,10 @@ module Springboard
 
       ##
       # @param [Springboard::Client] client
-      # @param [Addressable::URI, #to_s] uri
+      # @param [URI, #to_s] uri
       def initialize(client, uri)
         @client = client
-        @uri = URI.join('/', uri.to_s)
+        @uri = URI.join(client.base_uri, client.base_uri.path + '/', uri)
       end
 
       ##
@@ -115,8 +115,8 @@ module Springboard
       # Returns a new subordinate resource with the given sub-path.
       #
       # @return [Resource]
-      def [](uri)
-        clone(self.uri.subpath(uri))
+      def [](subpath)
+        clone(URI.join(uri, uri.path + '/', subpath))
       end
 
       ##
@@ -147,11 +147,9 @@ module Springboard
       #   @return [Hash]
       def query(params=nil)
         if params
-          uri = self.uri.dup
-          uri.merge_query_values!(params)
-          clone(uri)
+          clone(URIHelpers.merge_query_params(uri, params))
         else
-          self.uri.query_values || {}
+          URIHelpers.query_to_hash(uri)
         end
       end
 

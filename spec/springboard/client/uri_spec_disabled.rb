@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Springboard::Client::URI do
+xdescribe Springboard::Client::URI do
   let(:uri) { described_class.parse('/relative/path') }
 
   describe "subpath" do

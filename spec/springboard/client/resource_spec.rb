@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Springboard::Client::Resource do
   include_context "client"
 
-  let(:resource_path) { '/some/path' }
+  let(:resource_path) { 'some/path' }
   let(:resource) { Springboard::Client::Resource.new(client, resource_path) }
 
   describe "[]" do

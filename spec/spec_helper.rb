@@ -4,6 +4,8 @@ Coveralls.wear!
 require 'springboard-retail'
 require 'webmock/rspec'
 require 'shared_client_context'
+require 'pry'
+require 'byebug'
 
 RSpec.configure do |c|
   c.filter_run :focus => true

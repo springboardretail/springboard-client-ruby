@@ -30,7 +30,7 @@ module Springboard
     DEFAULT_CONNECT_TIMEOUT = 10
 
     ##
-    # @return [Addressable::URI] The client's base URI
+    # @return [URI] The client's base URI
     attr_reader :base_uri
 
     ##
@@ -40,7 +40,7 @@ module Springboard
     # @option opts [String] :token Springboard API Token
     def initialize(base_uri, opts={})
       @base_uri = URI.parse(base_uri)
-      configure_session(base_uri, opts)
+      configure_session(opts)
     end
 
     ##
@@ -80,7 +80,7 @@ module Springboard
       unless opts[:username] && opts[:password]
         raise "Must specify :username and :password"
       end
-      body = ::Addressable::URI.form_encode \
+      body = ::URI.encode_www_form \
         :auth_key => opts[:username],
         :password => opts[:password]
       response = post '/auth/identity/callback', body,
@@ -178,9 +178,9 @@ module Springboard
       uri = URI.parse(uri)
       total_pages = nil
       page = 1
-      uri.query_values = {'per_page' => DEFAULT_PER_PAGE}.merge(uri.query_values || {})
+      uri = URIHelpers.reverse_merge_query_params(uri, 'per_page' => DEFAULT_PER_PAGE)
       while total_pages.nil? or page <= total_pages
-        uri.merge_query_values! 'page' => page
+        uri = URIHelpers.merge_query_params(uri, 'page' => page)
         response = get!(uri)
         yield response
         total_pages ||= response['pages']
@@ -208,7 +208,7 @@ module Springboard
     # @return [Integer] The subordinate resource count
     def count(uri)
       uri = URI.parse(uri)
-      uri.merge_query_values! 'page' => 1, 'per_page' => 1
+      uri = URIHelpers.merge_query_params(uri, 'page' => 1, 'per_page' => 1)
       get!(uri)['total']
     end
 
@@ -219,7 +219,7 @@ module Springboard
     end
 
     def make_request(method, uri, headers=false, body=false)
-      args = [prepare_uri(uri).to_s]
+      args = [uri.to_s]
       args.push prepare_request_body(body) unless body === false
       args.push headers unless headers === false
       new_response session.__send__(method, *args)
@@ -234,18 +234,11 @@ module Springboard
       response
     end
 
-    def prepare_uri(uri)
-      uri = URI.parse(uri)
-      uri.path = uri.path.gsub(/^#{base_uri.path}/, '')
-      uri
-    end
-
     def new_response(patron_response)
       Response.new patron_response, self
     end
 
-    def configure_session(base_url, opts)
-      session.base_url = base_url
+    def configure_session(opts)
       session.headers['Content-Type'] = 'application/json'
       session.headers['Authorization'] = "Bearer #{opts[:token]}" if opts[:token]
       session.handle_cookies
@@ -260,4 +253,4 @@ end
 require 'springboard/client/resource'
 require 'springboard/client/response'
 require 'springboard/client/body'
-require 'springboard/client/uri'
+require 'springboard/client/uri_helpers'

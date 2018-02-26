@@ -118,12 +118,6 @@ describe Springboard::Client do
         response = client.__send__(method, '/relative/path')
         expect(response).to be_a Springboard::Client::Response
       end
-
-      it "should remove redundant base path prefix from URL if present" do
-        stub_request(method, "#{base_url}/relative/path")
-        response = client.__send__(method, '/api/relative/path')
-        expect(response).to be_a Springboard::Client::Response
-      end
     end
 
     describe bang_method do
@@ -201,7 +195,7 @@ describe Springboard::Client do
     end
   end
 
-  describe "each_page" do
+  fdescribe "each_page" do
     it "should request each page of the collection and yield each response to the block" do
       responses = (1..3).map do |p|
         response = double(Springboard::Client::Response)
