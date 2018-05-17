@@ -103,6 +103,19 @@ resource.sort(:description, :created_at).filter(:active => true).each do |item|
 end
 ```
 
+### Returning select fields
+Resources have a `only` method that accepts any number of field keys to return only the selected fields. Note that each call to `only` overwrites any previous fields.
+
+```ruby
+resource.only(:id)
+resource.only(:public_id, :updated_at)
+
+# returns a new resource for chaining:
+resource.only(:public_id, :updated_at).filter(:active => true).each do |item|
+  # ...
+end
+```
+
 ### Creating Resources
 
 Create a new resource via POST:
