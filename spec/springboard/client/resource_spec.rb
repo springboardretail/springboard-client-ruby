@@ -97,6 +97,16 @@ describe Springboard::Client::Resource do
     end
   end
 
+  describe "only" do
+    it "should set the _only parameter based on the given values" do
+      expect(resource.only('f1', 'f2').uri.query).to eq('_only[]=f1&_only[]=f2')
+    end
+
+    it "should replace the existing _only parameters" do
+      expect(resource.only('f1').only('f2', 'f3').uri.query).to eq('_only[]=f2&_only[]=f3')
+    end
+  end
+
   %w{count each each_page}.each do |method|
     describe method do
       it "should call the client's #{method} method with the resource's URI" do

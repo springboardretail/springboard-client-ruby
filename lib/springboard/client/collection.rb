@@ -80,6 +80,19 @@ module Springboard
       end
 
       ##
+      # Returns a new resource with the given fields added to the query string as _only parameters.
+      #
+      # @example
+      #    resource.only('id', :public_id)
+      #
+      # @param [#to_s] returns One or more fields
+      #
+      # @return [Resource]
+      def only(*fields)
+        query('_only' => fields)
+      end
+
+      ##
       # Performs a request to get the first result of the first page of the 
       # collection and returns it.
       #
