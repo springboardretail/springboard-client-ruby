@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name              = 'springboard-retail'
-  s.version           = '4.1.1'
+  s.version           = '4.2.0'
   s.platform          = Gem::Platform::RUBY
   s.authors           = ['Jay Stotz']
   s.summary           = 'Springboard Retail API client library'
