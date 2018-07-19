@@ -31,7 +31,8 @@ module Springboard
       #
       # @return [Integer] The subordinate resource count
       def count
-        call_client(:count)
+        response = clone.query(:per_page => 1, :page => 1).get!
+        response[:total]
       end
 
       ##
@@ -100,7 +101,7 @@ module Springboard
       #
       # @return [Body] The first entry in the response :results array
       def first
-        response = query(:per_page => 1, :page => 1).get!
+        response = clone.query(:per_page => 1, :page => 1).get!
         response[:results].first
       end
 

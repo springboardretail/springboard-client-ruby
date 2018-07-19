@@ -239,14 +239,4 @@ describe Springboard::Client do
       end.to yield_successive_args(*all_results)
     end
   end
-
-  describe "count" do
-    it "should request the first page/record of the collection and return the total" do
-      response = double(Springboard::Client::Response)
-      allow(response).to receive(:[]).with('total').and_return(17)
-      expect(client).to receive(:get!).with("/things?page=1&per_page=1".to_uri)
-        .and_return(response)
-      expect(client.count('/things')).to eq(17)
-    end
-  end
 end
