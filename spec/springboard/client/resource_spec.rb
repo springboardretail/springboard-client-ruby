@@ -107,7 +107,7 @@ describe Springboard::Client::Resource do
     end
   end
 
-  %w{count each each_page}.each do |method|
+  %w{each each_page}.each do |method|
     describe method do
       it "should call the client's #{method} method with the resource's URI" do
         expect(client).to receive(method).with(resource.uri)
@@ -134,6 +134,27 @@ describe Springboard::Client::Resource do
     end
   end
 
+  describe "count" do
+    let(:response_data) {
+      {
+        :status => 200,
+        :body => {:total => 123}.to_json
+      }
+    }
+
+    it "should not set the per_page query string param to 1" do
+      request_stub = stub_request(:get, "#{base_url}/some/path?page=1&per_page=1").to_return(response_data)
+      resource.count
+      expect(request_stub).to have_been_requested
+      expect(resource.uri.to_s).to eq('/some/path')
+    end
+
+    it "should return the total count for the requested resource" do
+      request_stub = stub_request(:get, "#{base_url}/some/path?page=1&per_page=1").to_return(response_data)
+      expect(resource.count).to eq(123)
+    end
+  end
+
   describe "first" do
     let(:response_data) {
       {
@@ -142,10 +163,11 @@ describe Springboard::Client::Resource do
       }
     }
 
-    it "should set the per_page query string param to 1" do
+    it "should not set the per_page query string param to 1" do
       request_stub = stub_request(:get, "#{base_url}/some/path?page=1&per_page=1").to_return(response_data)
       resource.first
       expect(request_stub).to have_been_requested
+      expect(resource.uri.to_s).to eq('/some/path')
     end
 
     it "should return the first element of the :results array" do

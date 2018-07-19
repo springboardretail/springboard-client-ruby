@@ -199,19 +199,6 @@ module Springboard
       end
     end
 
-    ##
-    # Returns a count of subordinate resources of the given collection resource
-    # URI.
-    #
-    # @param [#to_s] uri
-    # @raise [RequestFailed] If the GET fails
-    # @return [Integer] The subordinate resource count
-    def count(uri)
-      uri = URI.parse(uri)
-      uri.merge_query_values! 'page' => 1, 'per_page' => 1
-      get!(uri)['total']
-    end
-
     private
 
     def prepare_request_body(body)
