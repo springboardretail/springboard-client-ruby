@@ -48,6 +48,12 @@ describe Springboard::Client::Resource do
         it "should add bracket notation for array parameters" do
           expect(resource.__send__(method, :somearray => [1, 2, 3]).uri.to_s).to eq("/some/path?somearray[]=1&somearray[]=2&somearray[]=3")
         end
+
+        it "should return a new resource without modifying the existing URI" do
+          new_resource = resource.query(per_page: 1)
+          expect(new_resource.uri.to_s).to eq("/some/path?per_page=1")
+          expect(resource.uri.to_s).to eq("/some/path")
+        end
       end
 
       describe "when called without arguments" do
@@ -107,7 +113,7 @@ describe Springboard::Client::Resource do
     end
   end
 
-  %w{count each each_page}.each do |method|
+  %w{each each_page}.each do |method|
     describe method do
       it "should call the client's #{method} method with the resource's URI" do
         expect(client).to receive(method).with(resource.uri)
@@ -134,6 +140,37 @@ describe Springboard::Client::Resource do
     end
   end
 
+  describe "count" do
+    let(:response_data) {
+      {
+        :status => 200,
+        :body => {total: 123}.to_json
+      }
+    }
+
+    it "should call the client's count method with the resource's URI" do
+      expect(client).to receive(:count).with(resource.uri)
+      resource.count
+    end
+
+    it "should set the per_page query string param to 1" do
+      request_stub = stub_request(:get, "#{base_url}/some/path?page=1&per_page=1").to_return(response_data)
+      resource.count
+      expect(request_stub).to have_been_requested
+    end
+
+    it "should return the resource count" do
+      request_stub = stub_request(:get, "#{base_url}/some/path?page=1&per_page=1").to_return(response_data)
+      expect(resource.count).to eq(123)
+    end
+
+    it "should not modify the original resource URI" do
+      request_stub = stub_request(:get, "#{base_url}/some/path?page=1&per_page=1").to_return(response_data)
+      resource.count
+      expect(resource.uri.to_s).to eq("/some/path")
+    end
+  end
+
   describe "first" do
     let(:response_data) {
       {
@@ -151,6 +188,12 @@ describe Springboard::Client::Resource do
     it "should return the first element of the :results array" do
       request_stub = stub_request(:get, "#{base_url}/some/path?page=1&per_page=1").to_return(response_data)
       expect(resource.first).to eq({"id" => "Me first!"})
+    end
+
+    it "should not modify the original resource URI" do
+      request_stub = stub_request(:get, "#{base_url}/some/path?page=1&per_page=1").to_return(response_data)
+      resource.first
+      expect(resource.uri.to_s).to eq("/some/path")
     end
   end
 
