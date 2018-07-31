@@ -12,10 +12,39 @@ describe Springboard::Client::URI do
   end
 
   describe "parse" do
-    it "should return a URI based on the given string" do
-      uri = described_class.parse('/some_path')
-      expect(uri).to be_a(described_class)
-      expect(uri.to_s).to eq('/some_path')
+    describe "when called with a URI object" do
+      it "should return a cloned URI object" do
+        parsed_uri = described_class.parse(uri)
+        expect(uri.class).to eq(parsed_uri.class)
+        expect(uri.object_id).not_to eq(parsed_uri.object_id)
+        expect(parsed_uri.to_s).to eq(uri.to_s)
+      end
+    end
+
+    describe "when called with a URI string" do
+      it "should return a URI based on the given string" do
+        uri = described_class.parse('/some_path')
+        expect(uri).to be_a(described_class)
+        expect(uri.to_s).to eq('/some_path')
+      end
+    end
+  end
+
+  describe "dup" do
+    it "should return a duplicate URI object" do
+      dup_uri = uri.dup
+      expect(uri.class).to eq(dup_uri.class)
+      expect(uri.to_s).to eq(dup_uri.to_s)
+      expect(uri.object_id).not_to eq(dup_uri.object_id)
+    end
+
+    describe "when mutating the copy" do
+      it "should not affect the original" do
+        dup_uri = uri.dup
+        dup_uri.query_values = {per_page: 1}
+        expect(uri.to_s).to eq('/relative/path')
+        expect(dup_uri.to_s).to eq('/relative/path?per_page=1')
+      end
     end
   end
 

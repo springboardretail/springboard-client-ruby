@@ -10,7 +10,7 @@ module Springboard
       #
       # @return [URI]
       def self.parse(value)
-        return value if value.is_a?(self)
+        return value.dup if value.is_a?(self)
         new(::Addressable::URI.parse(value))
       end
 
@@ -28,6 +28,14 @@ module Springboard
       # @return [URI]
       def initialize(uri)
         @uri = uri
+      end
+
+      ##
+      # Clones the URI object
+      #
+      # @return [URI]
+      def dup
+        self.class.new(@uri.dup)
       end
 
       ##
