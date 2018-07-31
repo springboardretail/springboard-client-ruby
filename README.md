@@ -4,7 +4,6 @@
 [![Build Status](https://travis-ci.org/springboardretail/springboard-client-ruby.png?branch=master)](https://travis-ci.org/springboardretail/springboard-client-ruby)
 [![Code Climate](https://codeclimate.com/github/springboardretail/springboard-client-ruby.png)](https://codeclimate.com/github/springboardretail/springboard-client-ruby)
 [![Coverage Status](https://coveralls.io/repos/github/springboardretail/springboard-client-ruby/badge.svg?branch=master)](https://coveralls.io/github/springboardretail/springboard-client-ruby?branch=master)
-[![Dependency Status](https://gemnasium.com/springboardretail/springboard-client-ruby.png)](https://gemnasium.com/springboardretail/springboard-client-ruby)
 
 This is the [Springboard Retail](http://springboardretail.com/) (a point-of-sale/retail management system) client library for Ruby. It provides access to the Springboard Retail HTTP API.
 
