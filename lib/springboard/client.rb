@@ -30,7 +30,7 @@ module Springboard
     DEFAULT_CONNECT_TIMEOUT = 10
 
     ##
-    # @return [Addressable::URI] The client's base URI
+    # @return [URI] The client's base URI
     attr_reader :base_uri
 
     ##
@@ -80,7 +80,7 @@ module Springboard
       unless opts[:username] && opts[:password]
         raise "Must specify :username and :password"
       end
-      body = ::Addressable::URI.form_encode \
+      body = ::URI.encode_www_form \
         :auth_key => opts[:username],
         :password => opts[:password]
       response = post '/auth/identity/callback', body,
@@ -236,8 +236,7 @@ module Springboard
 
     def prepare_uri(uri)
       uri = URI.parse(uri)
-      uri.path = uri.path.gsub(/^#{base_uri.path}/, '')
-      uri
+      uri.to_s.gsub(/^#{base_uri.to_s}|^#{base_uri.path}/, '')
     end
 
     def new_response(patron_response)

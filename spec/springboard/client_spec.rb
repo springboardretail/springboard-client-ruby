@@ -84,8 +84,28 @@ describe Springboard::Client do
   end
 
   describe "[]" do
-    it "should return a resource object with the given path and client" do
+    it "should return a resource object with the given path string and client" do
       expect(client["path"]).to be_a Springboard::Client::Resource
+      expect(client[:path].uri.to_s).to eq("#{base_url}/path")
+    end
+
+    it "should return a resource object when given a path as a symbol" do
+      expect(client[:path]).to be_a Springboard::Client::Resource
+      expect(client[:path].uri.to_s).to eq("#{base_url}/path")
+    end
+
+    it "should return a resource object when given a path as a URI" do
+      uri = 'path'.to_uri
+      expect(client[uri]).to be_a Springboard::Client::Resource
+      expect(client[uri].uri.to_s).to eq("#{base_url}/path")
+    end
+
+    it "should not duplicate the base URI path" do
+      expect(client['api/subpath'].uri.to_s).to eq("#{base_url}/subpath")
+    end
+
+    it "should not duplicate the base URI" do
+      expect(client["#{base_url}/subpath"].uri.to_s).to eq("#{base_url}/subpath")
     end
   end
 
