@@ -21,7 +21,7 @@ module Springboard
       #
       # @return [Addressable::URI]
       attr_reader :uri
-      
+
       ##
       # The underlying Springboard Client.
       #
@@ -31,9 +31,9 @@ module Springboard
       ##
       # @param [Springboard::Client] client
       # @param [Addressable::URI, #to_s] uri
-      def initialize(client, uri)
+      def initialize(client, uri_or_path)
         @client = client
-        @uri = URI.join('/', uri.to_s)
+        @uri = normalize_uri(uri_or_path)
       end
 
       ##
@@ -194,6 +194,16 @@ module Springboard
       include Collection
 
       private
+
+      ##
+      # Normalizes the URI or path given to a URI
+      def normalize_uri(uri_or_path)
+        uri = URI.parse(uri_or_path)
+        return uri if uri.to_s.start_with?(client.base_uri.to_s)
+        path = uri_or_path.to_s.start_with?('/') ? uri_or_path : "/#{uri_or_path}"
+        path.to_s.gsub!(/^#{client.base_uri.to_s}|^#{client.base_uri.path}/, '')
+        URI.parse("#{client.base_uri}#{path}")
+      end
 
       ##
       # Calls a client method, passing the URI as the first argument.

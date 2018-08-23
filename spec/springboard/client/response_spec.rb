@@ -61,7 +61,7 @@ describe Springboard::Client::Response do
       end
 
       it "should have the Location header value as its URL" do
-        expect(response.resource.uri.to_s).to eq('/new/path')
+        expect(response.resource.uri.to_s).to eq("#{base_url}/new/path")
       end
     end
 
