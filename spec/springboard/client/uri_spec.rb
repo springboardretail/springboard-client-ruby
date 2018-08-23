@@ -70,40 +70,99 @@ describe Springboard::Client::URI do
   end
 
   describe "merge_query_values!" do
-    it "should call springboard_query_values=" do
-      uri.query_values = {'a' => '1'}
-      expect(uri).to receive(:springboard_query_values=).with({'a' => '1', 'b' => '2'})
-      uri.merge_query_values! 'b' => '2'
-    end
-
     it "should merge the given values with the existing query_values" do
       uri.query_values = {'a' => '1', 'b' => '2'}
-      uri.merge_query_values! 'b' => '20', 'c' => '30'
-      expect(uri.query_values).to eq({'a' => '1', 'b' => '20', 'c' => '30'})
+      uri.merge_query_values! 'c' => '3'
+      expect(uri.query_values).to eq(
+        {'a' => '1', 'b' => '2', 'c' => '3'}
+      )
+    end
+
+    it "should overwrite the previous values when a new value is given" do
+      uri.query_values = {'a' => '1', 'b' => '2'}
+      uri.merge_query_values! 'a' => '3', 'b' => '4'
+      expect(uri.query_values).to eq(
+        {'a' => '3', 'b' => '4'}
+      )
+    end
+
+    it "should overwrite the previous values if a new array is given" do
+      uri.query_values = {'a' => '1', 'b' => ['2', '3']}
+      uri.merge_query_values! 'b' => ['4', '5']
+      expect(uri.query_values).to eq(
+        {'a' => '1', 'b[]' => ['4', '5']}
+      )
     end
 
     it "should set the given values if there are no existing query_values" do
       expect(uri.query_values).to be_nil
-      uri.merge_query_values! 'b' => '20', 'c' => '30'
-      expect(uri.query_values).to eq({'b' => '20', 'c' => '30'})
+      uri.merge_query_values! 'a' => ['10'], 'b' => '20', 'c' => '30'
+      expect(uri.query_values).to eq({'a[]' => ['10'], 'b' => '20', 'c' => '30'})
     end
   end
 
-  describe "springboard_query_values=" do
+  describe "query_values=" do
     it "should preserve empty bracket notation for array params" do
       uri.query = 'sort[]=f1&sort[]=f2'
-      uri.__send__(:springboard_query_values=, uri.query_values)
-      expect(uri.to_s).to eq('/relative/path?sort[]=f1&sort[]=f2')
+      uri.__send__(:query_values=, uri.query_values)
+      expect(uri.to_s).to eq('/relative/path?sort%5B%5D=f1&sort%5B%5D=f2')
     end
 
     it "should stringify boolean param values" do
-      uri.__send__(:springboard_query_values=, {:p1 => true, :p2 => false})
+      uri.__send__(:query_values=, {:p1 => true, :p2 => false})
       expect(uri.to_s).to eq('/relative/path?p1=true&p2=false')
     end
 
     it "should support hash param values" do
-      uri.__send__(:springboard_query_values=, {:a => {:b => {:c => 123}}})
-      expect(uri.to_s).to eq('/relative/path?a[b][c]=123')
+      uri.__send__(:query_values=, {:a => {:b => {:c => 123}}})
+      expect(uri.to_s).to eq(
+        '/relative/path?a=%7B%22b%22%3D%3E%7B%22c%22%3D%3E123%7D%7D'
+      )
+    end
+  end
+
+  describe "query_values" do
+    it "should return the current query values" do
+      uri.query = 'sort[]=f1&sort[]=f2&per_page=all'
+      uri.__send__(:query_values=, uri.query_values)
+      expect(uri.query_values).to eq({'sort[]' => ['f1', 'f2'], 'per_page' => 'all'})
+    end
+  end
+
+  describe 'normalize_query_hash' do
+    it "should normalize symbol keys to strings" do
+      normalized_hash = uri.__send__(:normalize_query_hash, {:a => {:b => {:c => 123}}})
+      expect(normalized_hash).to eq({'a' => {'b' => {'c' => 123}}})
+    end
+
+    it "should add [] to the key for array values" do
+      normalized_hash = uri.__send__(:normalize_query_hash, {:a => [1, 2, 3]})
+      expect(normalized_hash).to eq({'a[]' => [1, 2, 3]})
+    end
+
+    it "should remove duplicate values for the same key" do
+      normalized_hash = uri.__send__(:normalize_query_hash, {:a => [1, 1, 2]})
+      expect(normalized_hash).to eq({'a[]' => [1, 2]})
+    end
+  end
+
+  describe 'normalized_query_hash_values' do
+    it "should return a normalized hash when given a hash as the value" do
+      normalized_hash = uri.__send__(:normalized_query_hash_values, {:a => [1, 1, 2]})
+      expect(normalized_hash).to eq({'a[]' => [1, 2]})
+    end
+
+    it "should return a unique array when given an array as the value" do
+      expect(uri.__send__(:normalized_query_hash_values, [1, 1, 2])).to eq([1, 2])
+    end
+
+    it "should return a string when given a boolean" do
+      expect(uri.__send__(:normalized_query_hash_values, true)).to eq('true')
+      expect(uri.__send__(:normalized_query_hash_values, false)).to eq('false')
+    end
+
+    it "should return itself when given a string" do
+      expect(uri.__send__(:normalized_query_hash_values, 'string')).to eq('string')
     end
   end
 end

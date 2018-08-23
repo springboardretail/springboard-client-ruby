@@ -13,7 +13,7 @@ describe Springboard::Client::Resource do
     end
 
     it "should return a resource with the given subpath appended to its URI" do
-      expect(resource["subpath"].uri.to_s).to eq("/some/path/subpath")
+      expect(resource["subpath"].uri.to_s).to eq("#{base_url}/some/path/subpath")
     end
 
     it "should return a resource with the same client instance" do
@@ -21,15 +21,17 @@ describe Springboard::Client::Resource do
     end
 
     it "should accept a symbol as a path" do
-      expect(resource[:subpath].uri.to_s).to eq("/some/path/subpath")
+      expect(resource[:subpath].uri.to_s).to eq("#{base_url}/some/path/subpath")
     end
 
     it "should accept a symbol as a path" do
-      expect(resource[:subpath].uri.to_s).to eq("/some/path/subpath")
+      expect(resource[:subpath].uri.to_s).to eq("#{base_url}/some/path/subpath")
     end
 
-    it "should not URI encode the given subpath" do
-      expect(resource["subpath with spaces"].uri.to_s).to eq("/some/path/subpath with spaces")
+    it "should URI encode the given subpath" do
+      expect(resource["subpath with spaces"].uri.to_s).to eq(
+        "#{base_url}/some/path/subpath%20with%20spaces"
+      )
     end
   end
 
@@ -37,22 +39,25 @@ describe Springboard::Client::Resource do
     describe method do
       describe "when called with a hash" do
         it "should set the query string parameters" do
-          expect(resource.__send__(method, :a => 1, :b => 2).uri.to_s).to eq("/some/path?a=1&b=2")
+          expect(resource.__send__(method, :a => 1, :b => 2).uri.to_s).to eq("#{base_url}/some/path?a=1&b=2")
         end
 
         it "should URL encode the given keys and values" do
-          expect(resource.__send__(method, "i have spaces" => "so do i: duh").uri.to_s).
-            to eq("/some/path?i%20have%20spaces=so%20do%20i%3A%20duh")
+          expect(resource.__send__(method, "i have spaces" => "so do i: duh").uri.to_s).to eq(
+            "#{base_url}/some/path?i+have+spaces=so+do+i%3A+duh"
+          )
         end
 
         it "should add bracket notation for array parameters" do
-          expect(resource.__send__(method, :somearray => [1, 2, 3]).uri.to_s).to eq("/some/path?somearray[]=1&somearray[]=2&somearray[]=3")
+          expect(resource.__send__(method, :somearray => [1, 2, 3]).uri.to_s).to eq(
+            "#{base_url}/some/path?somearray%5B%5D=1&somearray%5B%5D=2&somearray%5B%5D=3"
+          )
         end
 
         it "should return a new resource without modifying the existing URI" do
           new_resource = resource.query(per_page: 1)
-          expect(new_resource.uri.to_s).to eq("/some/path?per_page=1")
-          expect(resource.uri.to_s).to eq("/some/path")
+          expect(new_resource.uri.to_s).to eq("#{base_url}/some/path?per_page=1")
+          expect(resource.uri.to_s).to eq("#{base_url}/some/path")
         end
       end
 
@@ -70,7 +75,7 @@ describe Springboard::Client::Resource do
     describe "when given a hash" do
       it "should add a _filter query string param" do
         expect(resource.filter(:a => 1, :b => 2).uri).to eq(
-          '/some/path?_filter={"a":1,"b":2}'.to_uri
+          "#{base_url}/some/path?_filter=%7B%22a%22%3A1%2C%22b%22%3A2%7D".to_uri
         )
       end
     end
@@ -78,7 +83,7 @@ describe Springboard::Client::Resource do
     describe "when called multiple times" do
       it "should append args to _filter param as JSON array" do
         expect(resource.filter(:a => 1).filter(:b => 2).filter(:c => 3).uri).to eq(
-          '/some/path?_filter=[{"a":1},{"b":2},{"c":3}]'.to_uri
+          "#{base_url}/some/path?_filter=%5B%7B%22a%22%3A1%7D%2C%7B%22b%22%3A2%7D%2C%7B%22c%22%3A3%7D%5D".to_uri
         )
       end
     end
@@ -86,7 +91,15 @@ describe Springboard::Client::Resource do
     describe "when given a string" do
       it "should add a _filter query string param" do
         expect(resource.filter('{"a":1,"b":2}').uri).to eq(
-          '/some/path?_filter={"a":1,"b":2}'.to_uri
+          "#{base_url}/some/path?_filter=%7B%22a%22%3A1%2C%22b%22%3A2%7D".to_uri
+        )
+      end
+    end
+
+    describe "when called multiple times with other methods" do
+      it "should append args to _filter param as JSON array" do
+        expect(resource.filter(:a => 1).embed(:other).only(:field).filter(:b => 2).uri).to eq(
+          "#{base_url}/some/path?_filter=%5B%7B%22a%22%3A1%7D%2C%7B%22b%22%3A2%7D%5D&_include%5B%5D=other&_only%5B%5D=field".to_uri
         )
       end
     end
@@ -94,22 +107,22 @@ describe Springboard::Client::Resource do
 
   describe "sort" do
     it "should set the sort parameter based on the given values" do
-      expect(resource.sort('f1', 'f2,desc').uri.query).to eq('sort[]=f1&sort[]=f2%2Cdesc')
+      expect(resource.sort('f1', 'f2,desc').uri.query).to eq('sort%5B%5D=f1&sort%5B%5D=f2%2Cdesc')
     end
 
     it "should replace any existing sort parameter" do
       resource.sort('f1', 'f2,desc')
-      expect(resource.sort('f3,asc', 'f4').uri.query).to eq('sort[]=f3%2Casc&sort[]=f4')
+      expect(resource.sort('f3,asc', 'f4').uri.query).to eq('sort%5B%5D=f3%2Casc&sort%5B%5D=f4')
     end
   end
 
   describe "only" do
     it "should set the _only parameter based on the given values" do
-      expect(resource.only('f1', 'f2').uri.query).to eq('_only[]=f1&_only[]=f2')
+      expect(resource.only('f1', 'f2').uri.query).to eq('_only%5B%5D=f1&_only%5B%5D=f2')
     end
 
     it "should replace the existing _only parameters" do
-      expect(resource.only('f1').only('f2', 'f3').uri.query).to eq('_only[]=f2&_only[]=f3')
+      expect(resource.only('f1').only('f2', 'f3').uri.query).to eq('_only%5B%5D=f2&_only%5B%5D=f3')
     end
   end
 
@@ -167,7 +180,7 @@ describe Springboard::Client::Resource do
     it "should not modify the original resource URI" do
       request_stub = stub_request(:get, "#{base_url}/some/path?page=1&per_page=1").to_return(response_data)
       resource.count
-      expect(resource.uri.to_s).to eq("/some/path")
+      expect(resource.uri.to_s).to eq("#{base_url}/some/path")
     end
   end
 
@@ -193,38 +206,38 @@ describe Springboard::Client::Resource do
     it "should not modify the original resource URI" do
       request_stub = stub_request(:get, "#{base_url}/some/path?page=1&per_page=1").to_return(response_data)
       resource.first
-      expect(resource.uri.to_s).to eq("/some/path")
+      expect(resource.uri.to_s).to eq("#{base_url}/some/path")
     end
   end
 
   describe "embed" do
     it "should support a single embed" do
       expect(resource.embed(:thing1).uri.to_s).to eq(
-        '/some/path?_include[]=thing1'
+        "#{base_url}/some/path?_include%5B%5D=thing1"
       )
     end
 
     it "should support multiple embeds" do
       expect(resource.embed(:thing1, :thing2, :thing3).uri.to_s).to eq(
-        '/some/path?_include[]=thing1&_include[]=thing2&_include[]=thing3'
+        "#{base_url}/some/path?_include%5B%5D=thing1&_include%5B%5D=thing2&_include%5B%5D=thing3"
       )
     end
 
     it "should merge multiple embed calls" do
       expect(resource.embed(:thing1, :thing2).embed(:thing3, :thing4).uri.to_s).to eq(
-        '/some/path?_include[]=thing1&_include[]=thing2&_include[]=thing3&_include[]=thing4'
+        "#{base_url}/some/path?_include%5B%5D=thing1&_include%5B%5D=thing2&_include%5B%5D=thing3&_include%5B%5D=thing4"
       )
     end
 
     it "should merge multiple embed calls" do
       expect(resource.embed(:thing1, :thing2).embed(:thing3, :thing4).uri.to_s).to eq(
-        '/some/path?_include[]=thing1&_include[]=thing2&_include[]=thing3&_include[]=thing4'
+        "#{base_url}/some/path?_include%5B%5D=thing1&_include%5B%5D=thing2&_include%5B%5D=thing3&_include%5B%5D=thing4"
       )
     end
 
     it "should merge a call to embed with a manually added _include query param" do
       expect(resource.query('_include[]' => :thing1).embed(:thing2, :thing3).uri.to_s).to eq(
-        '/some/path?_include[]=thing1&_include[]=thing2&_include[]=thing3'
+        "#{base_url}/some/path?_include%5B%5D=thing1&_include%5B%5D=thing2&_include%5B%5D=thing3"
       )
     end
   end
@@ -301,6 +314,31 @@ describe Springboard::Client::Resource do
       it "should return false if the resource has a count greater than zero" do
         allow(resource).to receive(:count).and_return 10
         expect(resource.empty?).to be === false
+      end
+    end
+
+    describe 'normalize_uri' do
+      it "should return a URI object" do
+        normalized_uri = resource.__send__(:normalize_uri, '/some/path')
+        expect(normalized_uri).to be_a Springboard::Client::URI
+      end
+
+      it "should accept a URI object" do
+        uri = "#{base_url}/some/path".to_uri
+        normalized_uri = resource.__send__(:normalize_uri, uri)
+        expect(normalized_uri).to be_a Springboard::Client::URI
+        expect(normalized_uri.to_s).to eq("#{base_url}/some/path")
+      end
+
+      it "should accept a URI string" do
+        normalized_uri = resource.__send__(:normalize_uri, '/some/path')
+        expect(normalized_uri).to be_a Springboard::Client::URI
+        expect(normalized_uri.to_s).to eq("#{base_url}/some/path")
+      end
+
+      it "should not duplicate the base URI" do
+        normalized_uri = resource.__send__(:normalize_uri, "#{base_url}/some/path")
+        expect(normalized_uri.to_s).to eq("#{base_url}/some/path")
       end
     end
   end

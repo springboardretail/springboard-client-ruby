@@ -87,6 +87,10 @@ describe Springboard::Client do
     it "should return a resource object with the given path and client" do
       expect(client["path"]).to be_a Springboard::Client::Resource
     end
+
+    it "should return a resource object when given a path as asymbol" do
+      expect(client[:path]).to be_a Springboard::Client::Resource
+    end
   end
 
   describe "debug=" do

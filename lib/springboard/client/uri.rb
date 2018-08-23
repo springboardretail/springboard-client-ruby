@@ -1,9 +1,9 @@
-require 'addressable/uri'
+require 'uri'
 
 module Springboard
   class Client
     ##
-    # A wrapper around Addressable::URI
+    # A wrapper around URI
     class URI
       ##
       # Returns a URI object based on the parsed string.
@@ -11,15 +11,7 @@ module Springboard
       # @return [URI]
       def self.parse(value)
         return value.dup if value.is_a?(self)
-        new(::Addressable::URI.parse(value))
-      end
-
-      ##
-      # Joins several URIs together.
-      #
-      # @return [URI]
-      def self.join(*args)
-        new(::Addressable::URI.join(*args))
+        new(::URI.parse(value.to_s))
       end
 
       ##
@@ -46,58 +38,78 @@ module Springboard
       def subpath(subpath)
         uri = dup
         uri.path = "#{path}/" unless path.end_with?('/')
-        uri.join subpath.to_s.gsub(/^\//, '')
+        uri.path = uri.path + ::URI.encode(subpath.to_s.gsub(/^\//, ''))
+        uri
       end
 
       ##
       # Merges the given hash of query string parameters and values with the URI's
       # existing query string parameters (if any).
       def merge_query_values!(values)
-        self.springboard_query_values = (self.query_values || {}).merge(normalize_query_hash(values))
+        old_query_values = self.query_values || {}
+        self.query_values = old_query_values.merge(normalize_query_hash(values))
       end
 
+      ##
+      # Checks if supplied URI matches current URI
+      #
+      # @return [boolean]
       def ==(other_uri)
         return false unless other_uri.is_a?(self.class)
         uri == other_uri.__send__(:uri)
+      end
+
+      ##
+      # Overwrites the query using the supplied query values
+      def query_values=(values)
+        self.query = ::URI.encode_www_form(normalize_query_hash(values).sort)
+      end
+
+      ##
+      # Returns a hash of query string parameters and values
+      #
+      # @return [hash]
+      def query_values
+        return nil if query.nil?
+        ::URI.decode_www_form(query).each_with_object({}) do |(k, v), hash|
+          if k.end_with?('[]')
+            hash[k] = Array(hash[k]) + [v]
+          else
+            hash[k] = v
+          end
+        end
       end
 
       private
 
       attr_reader :uri
 
-      def springboard_query_values=(values)
-        retval = self.query_values = normalize_query_hash(values)
-        # Hack to strip digits from Addressable::URI's subscript notation
-        self.query = self.query.gsub(/\[\d+\]=/, '[]=')
-        retval
-      end
-
       def self.delegate_and_wrap(*methods)
         methods.each do |method|
           define_method(method) do |*args, &block|
-            result = @uri.__send__(method, *args, &block)
-            if result.is_a?(Addressable::URI)
-              self.class.new(result)
-            else
-              result
-            end
+            @uri.__send__(method, *args, &block)
           end
         end
       end
 
       delegate_and_wrap(
-        :join, :path, :path=, :form_encode, :to_s,
-        :query_values, :query_values=, :query, :query=
+        :path, :path=, :to_s, :query, :query=
       )
 
       def normalize_query_hash(hash)
         hash.inject({}) do |copy, (k, v)|
-          copy[k.to_s] = case v
-            when Hash then normalize_query_hash(v)
-            when true, false then v.to_s
-            else v end
+          k = "#{k}[]" if v.is_a?(Array) && !k.to_s.end_with?('[]')
+          copy[k.to_s] = normalized_query_hash_values(v)
           copy
         end
+      end
+
+      def normalized_query_hash_values(value)
+        case value
+        when Hash then normalize_query_hash(value)
+        when true, false then value.to_s
+        when Array then value.uniq
+        else value end
       end
     end
   end
