@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    springboard-retail (4.2.1)
+    springboard-retail (4.3.0)
       hashie
       json (>= 1.7.4)
       patron (= 0.4.18)
