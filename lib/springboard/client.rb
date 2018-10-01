@@ -1,6 +1,7 @@
 require 'rubygems'
-require 'patron'
+require 'faraday'
 require 'json'
+require 'logger'
 
 require 'springboard/client/errors'
 
@@ -34,23 +35,18 @@ module Springboard
     attr_reader :base_uri
 
     ##
+    # @return [Faraday::Connection] Faraday's connection
+    attr_reader :connection
+
+    ##
     # @param [String] base_uri Base URI
     # @option opts [Boolean, String] :debug Pass true to debug to stdout. Pass a String to debug to given filename.
     # @option opts [Boolean] :insecure Disable SSL certificate verification
     # @option opts [String] :token Springboard API Token
     def initialize(base_uri, opts={})
       @base_uri = URI.parse(base_uri)
-      configure_session(base_uri, opts)
-    end
-
-    ##
-    # Returns the underlying Patron session
-    #
-    # @see http://patron.rubyforge.org/Patron/Session.html Patron::Session docs
-    #
-    # @return [Patron::Session]
-    def session
-      @session ||= Patron::Session.new
+      @opts = opts
+      configure_connection!
     end
 
     ##
@@ -61,7 +57,8 @@ module Springboard
     #
     # @return [String, Boolean] The debug argument
     def debug=(debug)
-      session.enable_debug(debug == true ? nil : debug)
+      @opts[:debug] = debug
+      configure_connection!
     end
 
     ##
@@ -85,7 +82,14 @@ module Springboard
         :password => opts[:password]
       response = post '/auth/identity/callback', body,
         'Content-Type' => 'application/x-www-form-urlencoded'
-      response.success? or raise AuthFailed, "Springboard auth failed"
+
+      if response.success?
+        @session_cookie = response.headers['set-cookie']
+
+        true
+      else
+        raise AuthFailed, "Springboard auth failed"
+      end
     end
 
     ##
@@ -214,20 +218,28 @@ module Springboard
 
     private
 
+    attr_reader :opts, :session_cookie
+
     def prepare_request_body(body)
       body.is_a?(Hash) ? JSON.dump(body) : body
     end
 
     def make_request(method, uri, headers=false, body=false)
-      args = [prepare_uri(uri).to_s]
-      args.push prepare_request_body(body) unless body === false
-      args.push headers unless headers === false
-      new_response session.__send__(method, *args)
+      response = connection.__send__(method) do |request|
+        request.url prepare_uri(uri).to_s
+
+        request.headers = headers unless headers === false
+        request.headers['Cookie'] = session_cookie if session_cookie
+
+        request.body = prepare_request_body(body) unless body === false
+      end
+
+      new_response(response)
     end
 
     def raise_on_fail(response)
       if !response.success?
-        error = RequestFailed.new "Request failed with status: #{response.status_line}"
+        error = RequestFailed.new "Request failed with status: #{response.status}"
         error.response = response
         raise error
       end
@@ -236,22 +248,35 @@ module Springboard
 
     def prepare_uri(uri)
       uri = URI.parse(uri)
-      uri.to_s.gsub(/^#{base_uri.to_s}|^#{base_uri.path}/, '')
+      uri.to_s
+        .gsub(/^#{base_uri.to_s}|^#{base_uri.path}/, '')
+        .gsub(/^\//, '')
     end
 
-    def new_response(patron_response)
-      Response.new patron_response, self
+    def new_response(faraday_response)
+      Response.new faraday_response, self
     end
 
-    def configure_session(base_url, opts)
-      session.base_url = base_url
-      session.headers['Content-Type'] = 'application/json'
-      session.headers['Authorization'] = "Bearer #{opts[:token]}" if opts[:token]
-      session.handle_cookies
-      session.insecure = opts[:insecure] if opts.has_key?(:insecure)
-      session.timeout = DEFAULT_TIMEOUT
-      session.connect_timeout = DEFAULT_CONNECT_TIMEOUT
-      self.debug = opts[:debug] if opts.has_key?(:debug)
+    def configure_connection!
+      @connection = Faraday.new
+
+      connection.url_prefix= base_uri.to_s
+
+      connection.headers['Content-Type'] = 'application/json'
+      connection.headers['Authorization'] = "Bearer #{opts[:token]}" if opts[:token]
+
+      connection.ssl[:verify] = false if opts.has_key?(:insecure)
+
+      connection.options.timeout  = DEFAULT_TIMEOUT
+      connection.options.open_timeout = DEFAULT_CONNECT_TIMEOUT
+
+      if debug = opts[:debug]
+        connection.response :logger, debug_logger(debug), bodies: true
+      end
+    end
+
+    def debug_logger(debug)
+      Logger.new(debug == true ? STDOUT : debug)
     end
   end
 end

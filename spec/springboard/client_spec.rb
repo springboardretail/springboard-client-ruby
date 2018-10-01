@@ -3,17 +3,19 @@ require 'spec_helper'
 describe Springboard::Client do
   include_context "client"
 
-  describe "session" do
-    it "should be a Patron::Session" do
-      expect(client.session).to be_a Patron::Session
+  describe "connection" do
+    it "should be a Faraday::Connection" do
+      expect(client.connection).to be_a Faraday::Connection
     end
   end
 
   describe "auth" do
     it "should attempt to authenticate with the given username and password" do
-      request_stub = stub_request(:post, "#{base_url}/auth/identity/callback").with \
+      request_stub = stub_request(:post, "#{base_url}/auth/identity/callback").with(
         :body => "auth_key=coco&password=boggle",
         :headers => {'Content-Type' => 'application/x-www-form-urlencoded'}
+      )
+
       client.auth(:username => 'coco', :password => 'boggle')
       expect(request_stub).to have_been_requested
     end
@@ -34,51 +36,55 @@ describe Springboard::Client do
       expect { client.auth(:username => 'someone', :password => 'wrong') }.to \
         raise_error(Springboard::Client::AuthFailed, "Springboard auth failed")
     end
+
+    it "should store the session cookie" do
+      stub_request(:post, "#{base_url}/auth/identity/callback").to_return(headers: {'set-cookie' => '123'})
+      client.auth(:username => 'someone', :password => 'right')
+      expect(client.instance_variable_get(:@session_cookie)).to eq('123')
+    end
   end
 
   describe "initialize" do
-    it "should call configure_session" do
-      expect_any_instance_of(Springboard::Client).to receive(:configure_session).with(base_url, {:x => 'y'})
+    it "should call configure_connection!" do
+      expect_any_instance_of(Springboard::Client).to receive(:configure_connection!)
       Springboard::Client.new(base_url, :x => 'y')
     end
   end
 
-  describe "configure_session" do
-    it "should set the session's base_url" do
-      expect(session).to receive(:base_url=).with(base_url)
-      client.__send__(:configure_session, base_url, :x => 'y')
+  describe "configure_connection" do
+    it "should set the connection's url_prefix" do
+      client.__send__(:configure_connection!)
+      expect(connection.url_prefix.to_s).to eq(base_url)
     end
 
-    it "should enable cookies" do
-      expect(session).to receive(:handle_cookies)
-      client.__send__(:configure_session, base_url, :x => 'y')
-    end
-
-    it "should allow setting insecure on the session" do
-      expect(session).to receive(:insecure=).with(true)
-      client.__send__(:configure_session, base_url, :insecure => true)
+    it "should allow setting insecure on the connection" do
+      client.__send__(:opts)[:insecure] = true
+      client.__send__(:configure_connection!)
+      expect(connection.ssl[:verify]).to be false
     end
 
     it "set the default timeout" do
-      client.__send__(:configure_session, base_url, {})
-      expect(client.session.timeout).to eq(Springboard::Client::DEFAULT_TIMEOUT)
+      client.__send__(:configure_connection!)
+      expect(connection.options.timeout).to eq(Springboard::Client::DEFAULT_TIMEOUT)
     end
 
     it "set the default connect timeout" do
-      client.__send__(:configure_session, base_url, {})
-      expect(client.session.connect_timeout).to eq(Springboard::Client::DEFAULT_CONNECT_TIMEOUT)
+      client.__send__(:configure_connection!)
+      expect(connection.options.open_timeout).to eq(Springboard::Client::DEFAULT_CONNECT_TIMEOUT)
     end
 
     context 'headers' do
       let(:headers) { double('headers') }
       before do
-        allow(session).to receive(:headers).and_return(headers)
+        connection = double('Connection').as_null_object
+        allow(Faraday).to receive(:new).and_return(connection)
+        allow(connection).to receive(:headers).and_return(headers)
       end
 
       it 'sets Content-Type header' do
         expect(headers).to receive(:[]=).once.with('Content-Type', 'application/json')
         expect(headers).to receive(:[]=).once.with('Authorization', 'Bearer token')
-        client.__send__(:configure_session, base_url, :token => 'token')
+        Springboard::Client.new(base_url, token: 'token')
       end
     end
   end
@@ -110,26 +116,32 @@ describe Springboard::Client do
   end
 
   describe "debug=" do
-    context "with a file path" do
-      it "should pass the path to enable_debug on the Patron session" do
-        expect(client.session).to receive(:enable_debug).with('/path/to/log')
-        client.debug = '/path/to/log'
-      end
+    it "should set opts[:debug]" do
+      logger = double
+      allow(Logger).to receive(:new).with('/path/to/log').and_return(logger)
+
+      client.debug = '/path/to/log'
+      expect(client.__send__(:opts)[:debug]).to eq('/path/to/log')
     end
 
-    context "with true" do
-      it "should pass nil to enable_debug on the Patron session" do
-        expect(client.session).to receive(:enable_debug).with(nil)
-        client.debug = true
-      end
+    it "should reconfigure connection" do
+      logger = double
+      allow(Logger).to receive(:new).with('/path/to/log').and_return(logger)
+
+      expect(client).to receive(:configure_connection!)
+      client.debug = '/path/to/log'
     end
   end
 
   [:get, :head, :delete].each do |method|
     bang_method = "#{method}!"
     describe method do
-      it "should call session's #{method}" do
-        expect(session).to receive(method).with('/relative/path')
+      it "should call connection's #{method}" do
+        request = double.as_null_object
+
+        expect(connection).to receive(method).and_yield(request)
+        expect(request).to receive(:url).with('relative/path')
+
         client.__send__(method, '/relative/path')
       end
 
@@ -157,7 +169,7 @@ describe Springboard::Client do
       it "should raise an exception on failure" do
         response = double(Springboard::Client::Response)
         expect(response).to receive(:success?).and_return(false)
-        expect(response).to receive(:status_line).and_return('404 Not Found')
+        expect(response).to receive(:status).and_return(404)
         expect(client).to receive(method).with('/path', false).and_return(response)
         expect { client.send(bang_method, '/path') }.to raise_error(Springboard::Client::RequestFailed)
       end
@@ -168,8 +180,13 @@ describe Springboard::Client do
   [:put, :post].each do |method|
     bang_method = "#{method}!"
     describe method do
-      it "should call session's #{method}" do
-        expect(session).to receive(method).with('/relative/path', 'body')
+      it "should call connection's #{method}" do
+        request = double.as_null_object
+
+        expect(request).to receive(:url).with('relative/path')
+        expect(request).to receive(:body=).with('body')
+        expect(connection).to receive(method).and_yield(request)
+
         client.__send__(method, '/relative/path', 'body')
       end
 
@@ -180,8 +197,12 @@ describe Springboard::Client do
       end
 
       it "should serialize the request body as JSON if it is a hash" do
+        request = double.as_null_object
         body_hash = {:key1 => 'val1', :key2 => 'val2'}
-        expect(session).to receive(method).with('/path', body_hash.to_json)
+
+        expect(connection).to receive(method).and_yield(request)
+        expect(request).to receive(:body=).with(body_hash.to_json)
+
         client.__send__(method, '/path', body_hash)
       end
 
@@ -211,7 +232,7 @@ describe Springboard::Client do
       it "should raise an exception on failure" do
         response = double(Springboard::Client::Response)
         expect(response).to receive(:success?).and_return(false)
-        expect(response).to receive(:status_line).and_return('404 Not Found')
+        expect(response).to receive(:status).and_return(404)
         expect(client).to receive(method).with('/path', 'body', false).and_return(response)
         expect { client.send(bang_method, '/path', 'body') }.to raise_error { |error|
           expect(error).to be_a(Springboard::Client::RequestFailed)
