@@ -11,6 +11,7 @@ task :default => :spec
 desc "Start a console with a Springboard::Client instance"
 task :console do
   require 'springboard/client'
+  require 'pry'
   CLIENT = Springboard::Client.new(ENV['URI'])
   CLIENT.auth :username => ENV['USER'], :password => ENV['PASSWORD']
   Pry.start
