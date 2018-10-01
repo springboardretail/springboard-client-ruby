@@ -4,11 +4,16 @@ describe Springboard::Client::Response do
   include_context "client"
 
   let(:raw_body) { '{"key":"value"}' }
-  let(:raw_headers) { 'X-Custom-Header: Hi' }
+  let(:raw_headers) { { 'X-Custom-Header' => 'Hi' } }
   let(:status_code) { 200 }
   let(:path) { '/path' }
-  let(:patron_response) { Patron::Response.new(path, status_code, 0, raw_headers, raw_body) }
-  let(:response) { Springboard::Client::Response.new(patron_response, client) }
+  let(:faraday_response) do
+    env = Faraday::Env.new(:get, raw_body, path, nil, nil, nil, nil,
+                           nil, raw_body, raw_headers, status_code)
+
+    Faraday::Response.new(env)
+  end
+  let(:response) { Springboard::Client::Response.new(faraday_response, client) }
 
   describe "body" do
     describe "if raw body is valid JSON" do
@@ -54,7 +59,7 @@ describe Springboard::Client::Response do
 
   describe "resource" do
     describe "when Location header is returned" do
-      let(:raw_headers) { 'Location: /new/path' }
+      let(:raw_headers) { { Location: '/new/path' } }
 
       it "should be a Springboard::Client::Resource" do
         expect(response.resource).to be_a Springboard::Client::Resource
@@ -66,7 +71,7 @@ describe Springboard::Client::Response do
     end
 
     describe "when Location header is not returned" do
-      let(:raw_headers) { '' }
+      let(:raw_headers) { Hash.new }
 
       it "should be nil" do
         expect(response.resource).to be_nil
