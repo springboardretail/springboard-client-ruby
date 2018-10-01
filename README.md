@@ -7,7 +7,7 @@
 
 This is the [Springboard Retail](http://springboardretail.com/) (a point-of-sale/retail management system) client library for Ruby. It provides access to the Springboard Retail HTTP API.
 
-It is a wrapper around the [Patron](http://toland.github.com/patron/) HTTP client library. Supports MRI 1.9+.
+It is a wrapper around the [Faraday](https://github.com/lostisland/faraday) HTTP client library.
 
 You can find [documentation here](http://rdoc.info/github/springboardretail/springboard-client-ruby).
 
