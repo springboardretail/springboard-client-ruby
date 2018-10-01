@@ -44,9 +44,9 @@ module Springboard
       end
 
       ##
-      # Delegates missing methods to the underlying Patron::Response.
+      # Delegates missing methods to the underlying Faraday::Response.
       #
-      # @see http://patron.rubyforge.org/Patron/Response.html Patron::Response docs
+      # @see https://www.rubydoc.info/gems/faraday/Faraday/Response Faraday::Response docs
       def method_missing(method, *args, &block)
         @response.respond_to?(method) ? @response.__send__(method, *args, &block) : super
       end
