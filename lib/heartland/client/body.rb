@@ -1,6 +1,6 @@
 require 'hashie'
 
-module Springboard
+module HeartlandRetail
   class Client
     ##
     # An indifferent Hash to represent parsed response bodies.

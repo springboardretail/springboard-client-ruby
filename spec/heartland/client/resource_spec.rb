@@ -1,14 +1,14 @@
 require 'spec_helper'
 
-describe Springboard::Client::Resource do
+describe HeartlandRetail::Client::Resource do
   include_context "client"
 
   let(:resource_path) { '/some/path' }
-  let(:resource) { Springboard::Client::Resource.new(client, resource_path) }
+  let(:resource) { HeartlandRetail::Client::Resource.new(client, resource_path) }
 
   describe "[]" do
     it "should return a new resource" do
-      expect(resource["subpath"]).to be_a Springboard::Client::Resource
+      expect(resource["subpath"]).to be_a HeartlandRetail::Client::Resource
       expect(resource["subpath"].object_id).not_to eq(resource.object_id)
     end
 
@@ -271,12 +271,12 @@ describe Springboard::Client::Resource do
           resource.while_results do |result|
             # nothing
           end
-        end.to raise_error(Springboard::Client::RequestFailed)
+        end.to raise_error(HeartlandRetail::Client::RequestFailed)
       end
     end
 
     describe "exists?" do
-      let(:response) { double(Springboard::Client::Response) }
+      let(:response) { double(HeartlandRetail::Client::Response) }
 
       it "should return true if the response indicates success" do
         allow(response).to receive(:success?).and_return(true)
@@ -296,7 +296,7 @@ describe Springboard::Client::Resource do
         allow(response).to receive(:success?).and_return(false)
         expect(client).to receive(:head).with(resource.uri, false).and_return(response)
         expect { resource.exists? }.to raise_error { |e|
-          expect(e).to be_a Springboard::Client::RequestFailed
+          expect(e).to be_a HeartlandRetail::Client::RequestFailed
           expect(e.response).to be === response
           expect(e.message).to eq("Request during call to 'exists?' resulted in non-404 error.")
         }

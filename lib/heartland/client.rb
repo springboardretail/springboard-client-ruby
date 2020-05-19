@@ -3,13 +3,13 @@ require 'faraday'
 require 'json'
 require 'logger'
 
-require 'springboard/client/errors'
+require_relative 'client/errors'
 
 ##
-# Springboard namespace
-module Springboard
+# HeartlandRetail namespace
+module HeartlandRetail
   ##
-  # The main point of interaction for the Springboard Client library.
+  # The main point of interaction for the Heartland Retail Client library.
   #
   # Client code must successfully authenticate with the API via the {#auth}
   # method before calling any HTTP methods or the API will return authorization
@@ -42,7 +42,7 @@ module Springboard
     # @param [String] base_uri Base URI
     # @option opts [Boolean, String] :debug Pass true to debug to stdout. Pass a String to debug to given filename.
     # @option opts [Boolean] :insecure Disable SSL certificate verification
-    # @option opts [String] :token Springboard API Token
+    # @option opts [String] :token Heartland Retail API Token
     def initialize(base_uri, opts={})
       @base_uri = URI.parse(base_uri)
       @opts = opts
@@ -69,10 +69,10 @@ module Springboard
     #
     # @return [true]
     #
-    # @option opts [String] :username Springboard username
-    # @option opts [String] :password Springboard password
+    # @option opts [String] :username Heartland Retail username
+    # @option opts [String] :password Heartland Retail password
     def auth(opts={})
-      warn "[DEPRECATION] `auth` is deprecated. Please use `Springboard::Client.new '#{base_uri}', token: 'secret_token'` instead."
+      warn "[DEPRECATION] `auth` is deprecated. Please use `HeartlandRetail::Client.new '#{base_uri}', token: 'secret_token'` instead."
 
       unless opts[:username] && opts[:password]
         raise "Must specify :username and :password"
@@ -87,7 +87,7 @@ module Springboard
         @session_cookie = response.headers['set-cookie']
         return true
       else
-        raise AuthFailed, "Springboard auth failed"
+        raise AuthFailed, "Heartland Retail auth failed"
       end
     end
 
@@ -278,7 +278,22 @@ module Springboard
   end
 end
 
-require 'springboard/client/resource'
-require 'springboard/client/response'
-require 'springboard/client/body'
-require 'springboard/client/uri'
+##
+# Springboard namespace as alias of HeartlandRetail namespace for backwards compatability
+module Springboard
+  include HeartlandRetail
+
+  ##
+  # HeartlandRetail::Client with added deprecation warning for Springboard namespace
+  class Client < HeartlandRetail::Client
+    def initialize(base_uri, opts={})
+      warn "[DEPRECATION] `Springboard::Client.new` is deprecated. Please use `HeartlandRetail::Client.new` instead."
+      super
+    end
+  end
+end
+
+require_relative 'client/resource'
+require_relative 'client/response'
+require_relative 'client/body'
+require_relative 'client/uri'

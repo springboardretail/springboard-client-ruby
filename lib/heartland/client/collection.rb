@@ -1,4 +1,4 @@
-module Springboard
+module HeartlandRetail
   class Client
     ##
     # Mixin provides {Resource} with special methods for convenient interaction
@@ -49,7 +49,7 @@ module Springboard
       ##
       # Returns a new resource with the given filters added to the query string.
       #
-      # @see https://github.com/springboard/springboard-retail/blob/master/api/doc/filtering.md Springboard collection API filtering docs
+      # @see https://github.com/springboard/springboard-retail/blob/master/api/doc/filtering.md Heartland Retail collection API filtering docs
       #
       # @param [String, Hash] new_filters Hash or JSON string of new filters
       #
