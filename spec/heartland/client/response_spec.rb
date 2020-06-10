@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Springboard::Client::Response do
+describe HeartlandRetail::Client::Response do
   include_context "client"
 
   let(:raw_body) { '{"key":"value"}' }
@@ -13,12 +13,12 @@ describe Springboard::Client::Response do
 
     Faraday::Response.new(env)
   end
-  let(:response) { Springboard::Client::Response.new(faraday_response, client) }
+  let(:response) { HeartlandRetail::Client::Response.new(faraday_response, client) }
 
   describe "body" do
     describe "if raw body is valid JSON" do
-      it "should return a Springboard::Client::Body" do
-        expect(response.body).to be_a Springboard::Client::Body
+      it "should return a HeartlandRetail::Client::Body" do
+        expect(response.body).to be_a HeartlandRetail::Client::Body
       end
 
       it "should wrap the parsed response body" do
@@ -30,7 +30,7 @@ describe Springboard::Client::Response do
       let(:raw_body) { 'I am not JSON!' }
       it "should raise an informative error" do
         expect { response.body }.to raise_error \
-          Springboard::Client::BodyError,
+          HeartlandRetail::Client::BodyError,
           "Can't parse response body. (Hint: Try the raw_body method.)"
       end
     end
@@ -39,7 +39,7 @@ describe Springboard::Client::Response do
       let(:raw_body) { '' }
       it "should raise an informative error" do
         expect { response.body }.to raise_error \
-          Springboard::Client::BodyError,
+          HeartlandRetail::Client::BodyError,
           "Response body is empty. (Hint: If you just created a new resource, try: response.resource.get)"
       end
     end
@@ -61,8 +61,8 @@ describe Springboard::Client::Response do
     describe "when Location header is returned" do
       let(:raw_headers) { { Location: '/new/path' } }
 
-      it "should be a Springboard::Client::Resource" do
-        expect(response.resource).to be_a Springboard::Client::Resource
+      it "should be a HeartlandRetail::Client::Resource" do
+        expect(response.resource).to be_a HeartlandRetail::Client::Resource
       end
 
       it "should have the Location header value as its URL" do

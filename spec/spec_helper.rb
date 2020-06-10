@@ -1,7 +1,7 @@
 require 'coveralls'
 Coveralls.wear!
 
-require 'springboard-retail'
+require 'heartland-retail'
 require 'webmock/rspec'
 require 'shared_client_context'
 
@@ -12,6 +12,6 @@ end
 
 class String
   def to_uri
-    Springboard::Client::URI.parse(self)
+    HeartlandRetail::Client::URI.parse(self)
   end
 end

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    springboard-retail (5.0.0.beta1)
+    heartland-retail (5.0.0.beta1)
       faraday
       hashie
       json (>= 1.7.4)
@@ -74,11 +74,11 @@ PLATFORMS
 DEPENDENCIES
   codeclimate-test-reporter (~> 1.0.0)
   coveralls
+  heartland-retail!
   pry
   rake
   rspec (~> 3.2)
-  springboard-retail!
   webmock
 
 BUNDLED WITH
-   1.16.2
+   1.17.2

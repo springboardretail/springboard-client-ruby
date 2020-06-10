@@ -1,4 +1,4 @@
-module Springboard
+module HeartlandRetail
   class Client
     ##
     # API request failure

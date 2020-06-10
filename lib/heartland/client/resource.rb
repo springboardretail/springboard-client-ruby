@@ -1,6 +1,6 @@
-require 'springboard/client/collection'
+require_relative 'collection'
 
-module Springboard
+module HeartlandRetail
   class Client
     ##
     # An representation of an API resource identified by a URI. Allows
@@ -23,13 +23,13 @@ module Springboard
       attr_reader :uri
 
       ##
-      # The underlying Springboard Client.
+      # The underlying HeartlandRetail Client.
       #
       # @return [Client]
       attr_reader :client
 
       ##
-      # @param [Springboard::Client] client
+      # @param [HeartlandRetail::Client] client
       # @param [Addressable::URI, #to_s] uri
       def initialize(client, uri_or_path)
         @client = client

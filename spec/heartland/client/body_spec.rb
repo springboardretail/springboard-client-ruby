@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Springboard::Client::Body do
+describe HeartlandRetail::Client::Body do
   let(:hash) { {"key1" => "val1", "key2" => {"subkey1" => "subval1"}} }
-  let(:body) { Springboard::Client::Body.new(hash)}
+  let(:body) { HeartlandRetail::Client::Body.new(hash)}
 
   describe "[]" do
     it "should support string keys" do
@@ -29,4 +29,3 @@ describe Springboard::Client::Body do
     end
   end
 end
-

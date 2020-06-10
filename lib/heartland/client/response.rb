@@ -1,4 +1,4 @@
-module Springboard
+module HeartlandRetail
   class Client
     ##
     # An API response including body, headers, and status information.
@@ -82,4 +82,3 @@ module Springboard
     end
   end
 end
-

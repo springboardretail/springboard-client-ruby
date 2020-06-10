@@ -1,6 +1,6 @@
 require 'uri'
 
-module Springboard
+module HeartlandRetail
   class Client
     ##
     # A wrapper around URI

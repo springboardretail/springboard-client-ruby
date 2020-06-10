@@ -1,9 +1,9 @@
 Gem::Specification.new do |s|
-  s.name              = 'springboard-retail'
-  s.version           = '5.0.0.beta1'
+  s.name              = 'heartland-retail'
+  s.version           = '5.0.0'
   s.platform          = Gem::Platform::RUBY
-  s.authors           = ['Jay Stotz']
-  s.summary           = 'Springboard Retail API client library'
+  s.authors           = ['Jay Stotz', 'Derek Stotz']
+  s.summary           = 'Heartland Retail API client library'
 
   s.required_rubygems_version = '>= 1.3.6'
 
