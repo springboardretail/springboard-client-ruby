@@ -1,15 +1,15 @@
 # Heartland Retail API Client
 
-[![Gem Version](https://badge.fury.io/rb/springboard-retail.png)](http://badge.fury.io/rb/springboard-retail)
+[![Gem Version](https://badge.fury.io/rb/heartland-retail.png)](http://badge.fury.io/rb/heartland-retail)
 [![Build Status](https://travis-ci.org/springboardretail/springboard-client-ruby.png?branch=master)](https://travis-ci.org/springboardretail/springboard-client-ruby)
 [![Code Climate](https://codeclimate.com/github/springboardretail/springboard-client-ruby.png)](https://codeclimate.com/github/springboardretail/springboard-client-ruby)
 [![Coverage Status](https://coveralls.io/repos/github/springboardretail/springboard-client-ruby/badge.svg?branch=master)](https://coveralls.io/github/springboardretail/springboard-client-ruby?branch=master)
 
-This is the [Heartland Retail](http://heartlandretail.us/) (a point-of-sale/retail management system) client library for Ruby. It provides access to the Heartland Retail HTTP API.
+This is the [Heartland Retail](http://heartlandretail.us/) (a point-of-sale/retail management system) client library for Ruby. It provides access to the [Heartland Retail HTTP API](https://dev.retail.heartland.us/).
 
 It is a wrapper around the [Faraday](https://github.com/lostisland/faraday) HTTP client library.
 
-You can find [documentation here](http://rdoc.info/github/springboardretail/springboard-client-ruby).
+You can find [documentation here](https://rdoc.info/github/springboardretail/springboard-client-ruby).
 
 ## Installation
 
