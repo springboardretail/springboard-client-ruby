@@ -9,7 +9,7 @@ describe HeartlandRetail::Client::Response do
   let(:path) { '/path' }
   let(:faraday_response) do
     env = Faraday::Env.new(:get, raw_body, path, nil, nil, nil, nil,
-                           nil, raw_body, raw_headers, status_code)
+                           nil, nil, raw_headers, status_code, nil, raw_body)
 
     Faraday::Response.new(env)
   end
