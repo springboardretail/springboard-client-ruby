@@ -38,7 +38,8 @@ module HeartlandRetail
       def subpath(subpath)
         uri = dup
         uri.path = "#{path}/" unless path.end_with?('/')
-        uri.path = uri.path + ::URI.encode(subpath.to_s.gsub(/^\//, ''))
+        escaped_subpath = ::URI::Parser.new.escape(subpath.to_s.gsub(/^\//, ''))
+        uri.path = uri.path + escaped_subpath
         uri
       end
 
