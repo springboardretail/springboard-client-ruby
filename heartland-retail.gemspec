@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name              = 'heartland-retail'
-  s.version           = '5.0.0'
+  s.version           = '5.0.1'
   s.platform          = Gem::Platform::RUBY
   s.authors           = ['Jay Stotz', 'Derek Stotz']
   s.summary           = 'Heartland Retail API client library'
