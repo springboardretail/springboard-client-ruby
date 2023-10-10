@@ -1,0 +1,46 @@
+name: build
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '!*'
+  pull_request:
+
+jobs:
+  test:
+    name: Test 3.2.2
+    runs-on: ubuntu-latest
+    env:
+      CC_TEST_REPORTER_ID: 6963f51029c0c9bf6406bd1cc69ae951bc53f9bf7751b16035515b5f764c58fe
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2.2"
+          bundler-cache: true
+      - name: Run tests
+        run: bundle exec rake
+      - name: Report Coveralls
+        uses: coverallsapp/github-action@v2
+
+  test_legacy:
+    strategy:
+      matrix:
+        ruby_version:
+        - "3.1.4"
+        - "3.0.6"
+        - "2.7.8"
+        - "2.6.5"
+    runs-on: ubuntu-latest
+    name: Test ${{ matrix.ruby_version }}
+    outputs:
+      version_matrix: ${{ matrix.ruby_version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby_version }}
+          bundler-cache: true
+      - name: Run tests
+        run: bundle exec rake
