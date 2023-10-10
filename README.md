@@ -1,7 +1,7 @@
 # Heartland Retail API Client
 
-[![Gem Version](https://badge.fury.io/rb/heartland-retail.png)](http://badge.fury.io/rb/heartland-retail)
-[![Build Status](https://travis-ci.org/springboardretail/springboard-client-ruby.png?branch=master)](https://travis-ci.org/springboardretail/springboard-client-ruby)
+[![Gem Version](https://badge.fury.io/rb/heartland-retail.svg)](https://badge.fury.io/rb/heartland-retail)
+[![Build Status](https://github.com/springboardretail/springboard-client-ruby/actions/workflows/build.yml/badge.svg)](https://github.com/springboardretail/springboard-client-ruby/actions/workflows/build.yml)
 [![Code Climate](https://codeclimate.com/github/springboardretail/springboard-client-ruby.png)](https://codeclimate.com/github/springboardretail/springboard-client-ruby)
 [![Coverage Status](https://coveralls.io/repos/github/springboardretail/springboard-client-ruby/badge.svg?branch=master)](https://coveralls.io/github/springboardretail/springboard-client-ruby?branch=master)
 
