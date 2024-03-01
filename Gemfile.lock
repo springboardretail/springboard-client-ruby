@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    heartland-retail (5.0.1)
+    heartland-retail (5.1.0)
       faraday (~> 1.0)
-      hashie
-      json (>= 1.7.4)
+      hashie (= 4.1.0)
+      json (>= 2.7.1)
 
 GEM
   remote: https://rubygems.org/
@@ -19,7 +19,7 @@ GEM
       tins (~> 1.32)
     crack (0.4.5)
       rexml
-    diff-lcs (1.5.0)
+    diff-lcs (1.5.1)
     docile (1.4.0)
     faraday (1.10.3)
       faraday-em_http (~> 1.0)
@@ -45,8 +45,8 @@ GEM
     faraday-rack (1.0.0)
     faraday-retry (1.0.3)
     hashdiff (1.0.1)
-    hashie (5.0.0)
-    json (2.6.3)
+    hashie (4.1.0)
+    json (2.7.1)
     method_source (1.0.0)
     multipart-post (2.3.0)
     pry (0.14.2)
@@ -55,19 +55,19 @@ GEM
     public_suffix (5.0.3)
     rake (13.0.6)
     rexml (3.2.6)
-    rspec (3.12.0)
-      rspec-core (~> 3.12.0)
-      rspec-expectations (~> 3.12.0)
-      rspec-mocks (~> 3.12.0)
-    rspec-core (3.12.2)
-      rspec-support (~> 3.12.0)
-    rspec-expectations (3.12.3)
+    rspec (3.13.0)
+      rspec-core (~> 3.13.0)
+      rspec-expectations (~> 3.13.0)
+      rspec-mocks (~> 3.13.0)
+    rspec-core (3.13.0)
+      rspec-support (~> 3.13.0)
+    rspec-expectations (3.13.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.12.0)
-    rspec-mocks (3.12.6)
+      rspec-support (~> 3.13.0)
+    rspec-mocks (3.13.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.12.0)
-    rspec-support (3.12.1)
+      rspec-support (~> 3.13.0)
+    rspec-support (3.13.1)
     ruby2_keywords (0.0.5)
     simplecov (0.22.0)
       docile (~> 1.1)
@@ -94,8 +94,8 @@ DEPENDENCIES
   heartland-retail!
   pry
   rake
-  rspec (~> 3.2)
+  rspec (~> 3.13)
   webmock
 
 BUNDLED WITH
-   2.3.26
+   2.5.4
