@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.authors           = ['Jay Stotz', 'Derek Stotz']
   s.summary           = 'Heartland Retail API client library'
 
-  s.add_runtime_dependency 'faraday', '~> 1.0'
+  s.add_runtime_dependency 'faraday', '>= 1.0'
   s.add_runtime_dependency 'json', '>= 2.7.1'
   s.add_runtime_dependency 'hashie', '4.1.0'
 
