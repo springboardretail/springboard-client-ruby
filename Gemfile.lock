@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     heartland-retail (5.1.0)
-      faraday (>= 1.0)
+      faraday (= 2.12.2)
       hashie (= 4.1.0)
       json (>= 2.7.1)
 
